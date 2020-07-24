@@ -1,0 +1,13 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "Streamlabs",
+  "name": "Streamlabs",
+  "author": "",
+  "version": "0.0.2",
+  "description": "",
+  "gameVersion": "1.10.0",
+  "dependsOn": {
+
+  },
+  "features": []
+}
