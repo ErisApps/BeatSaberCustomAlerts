@@ -1,0 +1,13 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/beat-saber-modding-group/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "CustomAlerts",
+  "name": "CustomAlerts",
+  "author": "",
+  "version": "0.0.3",
+  "description": "",
+  "gameVersion": "1.10.0",
+  "dependsOn": {
+
+  },
+  "features": []
+}

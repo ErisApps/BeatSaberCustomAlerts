@@ -5,15 +5,15 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BFCF4B6A-EF67-49F7-8A0D-E2B270FC7507}</ProjectGuid>
+    <ProjectGuid>{B672C08E-927C-4C1E-82DE-3F010BBF7959}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Streamlabs</RootNamespace>
-    <AssemblyName>Streamlabs</AssemblyName>
+    <RootNamespace>CustomAlerts</RootNamespace>
+    <AssemblyName>CustomAlerts</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <DebugType>portable</DebugType>
-    <BeatSaberDir>C:\Program Files (x86)\Steam\steamapps\common\Beat Saber</BeatSaberDir>
+    <BeatSaberDir>$(ProjectDir)Refs</BeatSaberDir>
     <BeatSaberReferences>$(BeatSaberDir)</BeatSaberReferences>
     <ReferencePath>$(SolutionDir)Refs</ReferencePath>
     <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
@@ -43,19 +43,30 @@
     <DisableZipRelease>True</DisableZipRelease>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BSML">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Plugins\BSML.dll</HintPath>
+    <Reference Include="BSML, Version=1.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Plugins\BSML.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="BS_Utils">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Plugins\BS_Utils.dll</HintPath>
+    <Reference Include="ChatCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Libs\ChatCore.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="ChatCore">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Libs\ChatCore.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Libs\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="SiraUtil, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Plugins\SiraUtil.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -84,15 +95,14 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UI.dll</HintPath>
@@ -106,42 +116,63 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    <Reference Include="UnityEngine.UnityWebRequestModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="UnityEngine.VRModule">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.VRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="websocket-sharp">
+    <Reference Include="websocket-sharp, Version=1.0.2.31192, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
+      <Private>False</Private>
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\websocket-sharp.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Zenject, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Zenject-usage, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject-usage.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatService.cs" />
-    <Compile Include="Data\AlertDescriptor.cs" />
-    <Compile Include="Data\CustomAlert.cs" />
-    <Compile Include="Data\ReplaceTextWithUsername.cs" />
-    <Compile Include="FollowObject.cs" />
+    <Compile Include="Configuration\AlertValue.cs" />
+    <Compile Include="Configuration\Config.cs" />
+    <Compile Include="Configuration\Tokens.cs" />
+    <Compile Include="Configuration\Twitch.cs" />
+    <Compile Include="Installers\CustomAlertsInstaller.cs" />
+    <Compile Include="Models\AlertDescriptor.cs" />
+    <Compile Include="Models\AlertType.cs" />
+    <Compile Include="Models\CustomAlert.cs" />
+    <Compile Include="Models\IAlert.cs" />
+    <Compile Include="Models\MakeInvisible.cs" />
+    <Compile Include="Models\ReplaceTextWithUsername.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="Configuration\PluginConfig.cs" />
-    <Compile Include="Streamlabs\ConnectionState.cs" />
-    <Compile Include="Streamlabs\Streamlabs.cs" />
-    <Compile Include="QueueController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\MakeInvisible.cs" />
-    <Compile Include="UI\SettingsUI.cs" />
-    <Compile Include="Utils\AlertObjectLoader.cs" />
+    <Compile Include="Queuing\BasicQueueController.cs" />
+    <Compile Include="Queuing\IAlertQueue.cs" />
+    <Compile Include="Streamlabs\ConnectionState.cs" />
+    <Compile Include="Streamlabs\HandshakeResponse.cs" />
+    <Compile Include="Streamlabs\Message.cs" />
+    <Compile Include="Streamlabs\StreamlabsClient.cs" />
+    <Compile Include="Streamlabs\StreamlabsEvent.cs" />
+    <Compile Include="Utilities\AlertObjectLoader.cs" />
+    <Compile Include="Utilities\WSSSocketProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="BuildTargets.targets" />
     <None Include=".gitignore" />
-    <None Include="packages.config" />
-    <EmbeddedResource Include="UI\Settings.bsml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
