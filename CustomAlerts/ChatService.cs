@@ -1,7 +1,4 @@
 ﻿using System;
-using Zenject;
-using ChatCore;
-using IPA.Utilities;
 using System.Threading;
 using ChatCore.Services;
 using ChatCore.Interfaces;
@@ -24,10 +21,6 @@ namespace CustomAlerts
 
         public ChatService(Config config, ChatServiceMultiplexer streamingService)
         {
-            Plugin.Log.Error("ello");
-            Plugin.Log.Error("ello");
-            Plugin.Log.Error("ello");
-            Plugin.Log.Error("ello");
             _config = config;
             _streamingService = streamingService;
             _twitchChannel = _config.Twitch.Channel;

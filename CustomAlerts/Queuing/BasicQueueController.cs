@@ -1,32 +1,51 @@
-﻿using System;
-using Zenject;
+﻿using Zenject;
 using UnityEngine;
 using System.Threading;
 using System.Collections;
+using CustomAlerts.Models;
+using CustomAlerts.Utilities;
+using CustomAlerts.Streamlabs;
 using System.Collections.Generic;
-using CustomAlerts.Configuration;
 
 namespace CustomAlerts.Queuing
 {
     public class BasicQueueController : MonoBehaviour, IAlertQueue
     {
-        public float Delay => _config.AlertDelay;
-
-        private Config _config;
-        private event Action<IAlert> OnSpawn;
+        private StreamlabsClient _streamlabsClient;
+        private AlertObjectManager _alertObjectLoader;
         private SynchronizationContext _synchronizationContext;
         private readonly Queue<IAlert> _queuedAlerts = new Queue<IAlert>();
 
         [Inject]
-        public void Construct(Config config)
+        public void Construct(StreamlabsClient streamlabsClient, AlertObjectManager alertObjectLoader)
         {
-            _config = config;
+            _streamlabsClient = streamlabsClient;
+            _alertObjectLoader = alertObjectLoader;
+            _synchronizationContext = SynchronizationContext.Current;
+
+            _streamlabsClient.OnEvent += OnEvent;
+
+            Plugin.Log.Notice("Queue Controller Contructed");
         }
 
-        public void Awake()
+        public void OnDestry()
         {
-            _synchronizationContext = SynchronizationContext.Current;
-            Plugin.Log.Info($"Created {nameof(BasicQueueController)}");
+            _streamlabsClient.OnEvent -= OnEvent;
+        }
+
+        private void OnEvent(StreamlabsEvent streamlabsEvent)
+        {
+            CustomAlert alert = _alertObjectLoader.GetAlertByType(streamlabsEvent.AlertType);
+            AlertData alertData = _alertObjectLoader.Process(alert, streamlabsEvent);
+            if (alertData.canSpawn)
+            {
+                CustomAlert newAlert = new CustomAlert(alert.GameObject, alert.Descriptor, streamlabsEvent)
+                {
+                    Flatline = alertData.delay
+                };
+                
+                Enqueue(newAlert);
+            }
         }
 
         public void Enqueue(IAlert alert)
@@ -40,15 +59,15 @@ namespace CustomAlerts.Queuing
 
         public void Dequeue(IAlert alert)
         {
-            // eh.
+            throw new System.NotImplementedException();
         }
 
         private IEnumerator PlayQueue()
         {
             IAlert alert = _queuedAlerts.Peek();
             _synchronizationContext.Send(SafeInvokeSpawn, alert);
-            yield return new WaitForSecondsRealtime(alert.Lifeline + Delay);
-            _synchronizationContext.Send(SafeInvokeDespawn, alert);
+            yield return new WaitForSecondsRealtime(alert.Lifeline);
+            yield return new WaitForSecondsRealtime(alert.Flatline);
             _queuedAlerts.Dequeue();
             if (_queuedAlerts.Count != 0)
             {
@@ -56,7 +75,7 @@ namespace CustomAlerts.Queuing
             }
         }
 
-        void SafeInvokeSpawn(object alert) { (alert as CustomAlert).Spawn(); }
-        void SafeInvokeDespawn(object alert) { (alert as CustomAlert).Destroy(); }
+        void SafeInvokeSpawn(object alert) { (alert as IAlert).Spawn(); }
+        void SafeInvokeDespawn(object alert) { (alert as IAlert).Destroy(); }
     }
 }

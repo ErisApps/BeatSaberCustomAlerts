@@ -6,7 +6,7 @@ using IPA.Utilities;
 using CustomAlerts.Streamlabs;
 using BeatSaberMarkupLanguage;
 
-namespace CustomAlerts
+namespace CustomAlerts.Models
 {
     public class CustomAlert : IAlert
     {
@@ -18,6 +18,7 @@ namespace CustomAlerts
         public StreamlabsEvent StreamEvent { get; set; }
         public AlertType AlertType => StreamEvent.AlertType;
         public float Lifeline => Descriptor.alertLifetime;
+        public float Flatline { get; set; }
 
         public CustomAlert(string fileName)
         {
@@ -28,13 +29,15 @@ namespace CustomAlerts
                 try
                 {
                     AssetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.Combine(UnityGame.UserDataPath, "CustomAlerts"), FileName));
-                    GameObject alert = AssetBundle.LoadAsset<GameObject>("assets/_customalert.prefab");
+                    GameObject alert = AssetBundle.LoadAsset<GameObject>("Assets/_CustomAlert.prefab");
                     Descriptor = alert.GetComponent<AlertDescriptor>();
                     GameObject = alert;
+
+                    
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.Warn($"Unable to load the AssetBundle at {FileName}: {e.Message}");
+                    Plugin.Log.Warn($"\nUnable to load the AssetBundle {FileName}: {e.Message}");
                 }
             }
             else

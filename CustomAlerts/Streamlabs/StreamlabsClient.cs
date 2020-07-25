@@ -32,6 +32,8 @@ namespace CustomAlerts.Streamlabs
             _webSocketService.OnClose += OnClose;
             _webSocketService.OnError += OnError;
             Connect();
+
+            Plugin.Log.Notice("Streamlabs Client Constructed");
         }
 
         public void Connect()
@@ -120,12 +122,12 @@ namespace CustomAlerts.Streamlabs
 
         private void OnOpen()
         {
-            Plugin.Log.Info("Streamlabs Socket Opening");
+            Plugin.Log.Notice("Streamlabs Socket Opening");
         }
 
         private void OnClose()
         {
-            Plugin.Log.Info("Streamlabs Socket Closing");
+            Plugin.Log.Notice("Streamlabs Socket Closing");
             ChangeConnectionState(ConnectionState.NotConnected);
         }
 

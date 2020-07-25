@@ -7,7 +7,7 @@
   "description": "",
   "gameVersion": "1.10.0",
   "dependsOn": {
-
+    "SiraUtil": "^0.1.0"
   },
   "features": []
 }

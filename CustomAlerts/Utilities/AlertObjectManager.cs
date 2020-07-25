@@ -2,28 +2,24 @@
 using System.IO;
 using System.Linq;
 using IPA.Utilities;
-using CustomAlerts.Queuing;
+using CustomAlerts.Models;
 using CustomAlerts.Streamlabs;
 using CustomAlerts.Configuration;
 using System.Collections.Generic;
 
 namespace CustomAlerts.Utilities
 {
-    public class AlertObjectLoader
+    public class AlertObjectManager : IDisposable
     {
         private readonly Config _config;
-        private readonly IAlertQueue _alertQueue;
-        private readonly StreamlabsClient _streamlabsClient;
         public bool Loaded { get; private set; } = false;
         public IList<CustomAlert> Alerts { get; private set; }
         public IEnumerable<string> CustomAlertFiles { get; private set; }
 
-        public AlertObjectLoader(Config config, IAlertQueue alertQueue, StreamlabsClient streamlabsClient)
+        public AlertObjectManager(Config config)
         {
             _config = config;
-            _alertQueue = alertQueue;
             Alerts = new List<CustomAlert>();
-            _streamlabsClient = streamlabsClient;
             CustomAlertFiles = Enumerable.Empty<string>();
 
             Load();
@@ -33,8 +29,7 @@ namespace CustomAlerts.Utilities
         {
             if (!Loaded)
             {
-                _streamlabsClient.OnEvent += SpawnAlertFromEvent;
-
+                Plugin.Log.Notice("Object Manager Loading...");
                 FillDefaultAlerts();
                 string assetPath = Path.Combine(UnityGame.UserDataPath, "CustomAlerts");
                 Directory.CreateDirectory(assetPath);
@@ -52,61 +47,55 @@ namespace CustomAlerts.Utilities
         {
             if (Loaded)
             {
-                _streamlabsClient.OnEvent -= SpawnAlertFromEvent;
+                Plugin.Log.Notice("Object Manager Unloading...");
+                Alerts.ToList().ForEach(a => { a.Destroy(); Plugin.Log.Info("Destroyed: " + a.FileName); });
                 Alerts.Clear();
                 CustomAlertFiles = Enumerable.Empty<string>();
                 Loaded = false;
             }
         }
 
-        public void SetAlertByType(string input, AlertType type)
+        public AlertData Process(CustomAlert alert, StreamlabsEvent streamEvent)
+        {
+            AlertData data = new AlertData
+            {
+                canSpawn = false
+            };
+            if (alert == null || alert.Descriptor == null || alert.GameObject == null || streamEvent == null)
+            {
+                return data;
+            }
+            AlertValue value = _config.Alerts.FirstOrDefault(a => a.Enabled && a.AlertType == streamEvent.AlertType && a.Value == alert.Descriptor.alertName);
+            if (value != null)
+            {
+                data.canSpawn = true;
+                if (value.AlertType == AlertType.ChannelPoints)
+                {
+                    data.canSpawn = alert.Descriptor.channelPointsName.ToLower().Trim() == streamEvent.Message[0].ChannelPointsName.ToLower().Trim();
+                }
+                data.delay = value.OverrideDelay ? value.DelayOverrideTime : _config.AlertDelay;
+            }
+            return data;
+        }
+
+        /*public void SetAlertByType(string input, AlertType type)
         {
             AlertValue value = _config.Alerts.FirstOrDefault(a => a.AlertType == type);
             if (value != null)
             {
                 value.Value = input;
             }
-        }
+        }*/
 
         public CustomAlert GetAlertByType(AlertType type)
         {
-            AlertValue value = _config.Alerts.FirstOrDefault(a => a.Value != "Disabled" && a.AlertType == type);
+            AlertValue value = _config.Alerts.FirstOrDefault(a => a.Enabled == true && a.AlertType == type);
             if (value != null)
             {
-                return Alerts.FirstOrDefault(ca => ca.Descriptor.alertName == value.Value);
+                var alert = Alerts.FirstOrDefault(ca => ca.Descriptor != null && ca.Descriptor.alertName == value.Value);
+                return alert;
             }
             return null;
-        }
-
-        public void SpawnAlertFromEvent(StreamlabsEvent streamlabsEvent)
-        {
-            
-
-            AlertType type = streamlabsEvent.AlertType;
-            var alertValue = _config.Alerts.FirstOrDefault(a => a.Value != "Disabled" && a.AlertType == type);
-            if (alertValue != null)
-            {
-                Plugin.Log.Info("alert value not null");
-                var alert = Alerts.FirstOrDefault(ca => ca.Descriptor.alertName == alertValue.Value);
-                if (alert != null)
-                {
-                    Plugin.Log.Info("alert not null");
-                    CustomAlert newAlert = new CustomAlert(alert.GameObject, alert.Descriptor, streamlabsEvent);
-                    _alertQueue.Enqueue(newAlert);            
-}
-            }
-        }
-
-        public void SpawnChannelPointsAlert(StreamlabsEvent streamlabsEvent)
-        {
-            AlertType type = streamlabsEvent.AlertType;
-            var alert = Alerts.FirstOrDefault(ca => ca.Descriptor.channelPointsName.ToLower().Trim() == streamlabsEvent.Message[0].ChannelPointsName.ToLower().Trim());
-            if (alert != null)
-            {
-                alert.StreamEvent = streamlabsEvent;
-                // at least for now, i'm not gonna queue channel points. I think it'll be funnier when they're not queued.
-                alert.Spawn();
-            }
         }
 
         private void FillDefaultAlerts()
@@ -118,7 +107,7 @@ namespace CustomAlerts.Utilities
                     AlertValue alertValue = new AlertValue
                     {
                         AlertType = alertType,
-                        Value = "Disabled"
+                        Enabled = false
                     };
                     _config.Alerts.Add(alertValue);
                 }
@@ -173,6 +162,12 @@ namespace CustomAlerts.Utilities
                 }
             }
             return customAlerts;
+        }
+
+        public void Dispose()
+        {
+            Unload(); //woopsBiggasm
+            Plugin.Log.Info("Unloading Complete");
         }
     }
 }

@@ -148,6 +148,7 @@
     <Compile Include="Configuration\Tokens.cs" />
     <Compile Include="Configuration\Twitch.cs" />
     <Compile Include="Installers\CustomAlertsInstaller.cs" />
+    <Compile Include="Models\AlertData.cs" />
     <Compile Include="Models\AlertDescriptor.cs" />
     <Compile Include="Models\AlertType.cs" />
     <Compile Include="Models\CustomAlert.cs" />
@@ -163,7 +164,7 @@
     <Compile Include="Streamlabs\Message.cs" />
     <Compile Include="Streamlabs\StreamlabsClient.cs" />
     <Compile Include="Streamlabs\StreamlabsEvent.cs" />
-    <Compile Include="Utilities\AlertObjectLoader.cs" />
+    <Compile Include="Utilities\AlertObjectManager.cs" />
     <Compile Include="Utilities\WSSSocketProvider.cs" />
   </ItemGroup>
   <ItemGroup>
