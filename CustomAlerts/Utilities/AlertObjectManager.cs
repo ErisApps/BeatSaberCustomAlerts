@@ -30,7 +30,6 @@ namespace CustomAlerts.Utilities
             if (!Loaded)
             {
                 Plugin.Log.Notice("Object Manager Loading...");
-                FillDefaultAlerts();
                 string assetPath = Path.Combine(UnityGame.UserDataPath, "CustomAlerts");
                 Directory.CreateDirectory(assetPath);
 
@@ -39,6 +38,21 @@ namespace CustomAlerts.Utilities
                 Plugin.Log.Notice($"{CustomAlertFiles.Count()} alert(s) found.");
 
                 Alerts = LoadCustomAlerts(CustomAlertFiles);
+
+                foreach (var alert in Alerts)
+                {
+                    if (!_config.Alerts.Any(a => a.AlertType == alert.AlertType && a.Value == (string.IsNullOrEmpty(alert.Descriptor.channelPointsName) ? alert.Descriptor.alertName : alert.Descriptor.channelPointsName)))
+                    {
+                        _config.Alerts.Add(new AlertValue
+                        {
+                            Enabled = false,
+                            OverrideDelay = false,
+                            AlertType = alert.AlertType,
+                            DelayOverrideTime = _config.AlertDelay,
+                            Value = string.IsNullOrEmpty(alert.Descriptor.channelPointsName) ? alert.Descriptor.alertName : alert.Descriptor.channelPointsName
+                        });
+                    }
+                }
             }
             Loaded = true;
         }
@@ -55,21 +69,49 @@ namespace CustomAlerts.Utilities
             }
         }
 
+        public AlertValue ValueFromAlert(CustomAlert alert)
+        {
+            AlertValue value = _config.Alerts.FirstOrDefault(a => a.AlertType == alert.AlertType && a.Value == (string.IsNullOrEmpty(alert.Descriptor.channelPointsName) ? alert.Descriptor.alertName : alert.Descriptor.channelPointsName));
+            if (value == null)
+            {
+                value = new AlertValue
+                {
+                    Enabled = false,
+                    OverrideDelay = false,
+                    AlertType = alert.AlertType,
+                    DelayOverrideTime = _config.AlertDelay,
+                    Value = string.IsNullOrEmpty(alert.Descriptor.channelPointsName) ? alert.Descriptor.alertName : alert.Descriptor.channelPointsName
+                };
+                _config.Alerts.Add(value);
+            }
+            return value;
+        }
+
+        public void ResetAlertValues(AlertType type)
+        {
+            _config.Alerts.Where(a => a.AlertType == type).ToList().ForEach(a => a.Enabled = false);
+        }
+
+        public int ActiveAlertCount(AlertType type)
+        {
+            return _config.Alerts.Count(a => a.AlertType == type && a.Enabled == true);
+        }
+
         public AlertData Process(CustomAlert alert, StreamlabsEvent streamEvent)
         {
             AlertData data = new AlertData
             {
                 canSpawn = false
             };
-            if (alert == null || alert.Descriptor == null || alert.GameObject == null || streamEvent == null)
+            if (alert == null || alert.Descriptor == null || alert.GameObject == null)
             {
                 return data;
             }
-            AlertValue value = _config.Alerts.FirstOrDefault(a => a.Enabled && a.AlertType == streamEvent.AlertType && a.Value == alert.Descriptor.alertName);
+            AlertValue value = _config.Alerts.FirstOrDefault(a => a.Enabled && a.AlertType == alert.AlertType && (a.Value == alert.Descriptor.alertName || a.Value == alert.Descriptor.channelPointsName));
             if (value != null)
             {
                 data.canSpawn = true;
-                if (value.AlertType == AlertType.ChannelPoints)
+                if (value.AlertType == AlertType.ChannelPoints && streamEvent != null)
                 {
                     data.canSpawn = alert.Descriptor.channelPointsName.ToLower().Trim() == streamEvent.Message[0].ChannelPointsName.ToLower().Trim();
                 }
@@ -78,40 +120,23 @@ namespace CustomAlerts.Utilities
             return data;
         }
 
-        /*public void SetAlertByType(string input, AlertType type)
+        public CustomAlert GetAlertByType(AlertType type, string valueSpecific = null)
         {
-            AlertValue value = _config.Alerts.FirstOrDefault(a => a.AlertType == type);
-            if (value != null)
+            AlertValue value;
+            if (!string.IsNullOrEmpty(valueSpecific))
             {
-                value.Value = input;
+                value = _config.Alerts.FirstOrDefault(a => a.Enabled == true && a.AlertType == type && a.Value == valueSpecific);
             }
-        }*/
-
-        public CustomAlert GetAlertByType(AlertType type)
-        {
-            AlertValue value = _config.Alerts.FirstOrDefault(a => a.Enabled == true && a.AlertType == type);
+            else
+            {
+                value = _config.Alerts.FirstOrDefault(a => a.Enabled == true && a.AlertType == type);
+            }
             if (value != null)
             {
-                var alert = Alerts.FirstOrDefault(ca => ca.Descriptor != null && ca.Descriptor.alertName == value.Value);
+                var alert = Alerts.FirstOrDefault(ca => ca.Descriptor != null && (ca.Descriptor.alertName == value.Value || ca.Descriptor.channelPointsName == value.Value));
                 return alert;
             }
             return null;
-        }
-
-        private void FillDefaultAlerts()
-        {
-            foreach (AlertType alertType in (AlertType[])Enum.GetValues(typeof(AlertType)))
-            {
-                if (!_config.Alerts.Any(a => a.AlertType == alertType))
-                {
-                    AlertValue alertValue = new AlertValue
-                    {
-                        AlertType = alertType,
-                        Enabled = false
-                    };
-                    _config.Alerts.Add(alertValue);
-                }
-            }
         }
 
         private static IEnumerable<string> GetFileNames(string path, IEnumerable<string> filters, SearchOption searchOption, bool returnShortPath = false)

@@ -96,6 +96,7 @@ namespace CustomAlerts.Streamlabs
                     string splitData = message.Split(new string[] { "\"event\"" }, StringSplitOptions.None)[1].Substring(1);
                     splitData = splitData.Remove(splitData.Length - 1);
                     StreamlabsEvent streamlabsEvent = JsonConvert.DeserializeObject<StreamlabsEvent>(splitData);
+                    Plugin.Log.Info(splitData);
                     _synchronizationContext.Send(SafeInvokeStreamEvent, streamlabsEvent);
                 }
             }

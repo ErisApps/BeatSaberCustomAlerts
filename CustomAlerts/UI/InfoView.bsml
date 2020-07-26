@@ -1,0 +1,21 @@
+﻿<vertical child-expand-width="true" child-control-height="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+  <horizontal bg="panel-top" pad-left="20" pad-right="20">
+    <text text="Information" align="Center" font-size="10" />
+  </horizontal>
+  <horizontal spacing="15">
+    <vertical>
+      <img src="CustomAlerts.Resources.logo.png" preserve-aspect="true" />
+      <button text="More Models On Discord!" hover-hint="I don't do anything yet." />
+    </vertical>
+    <vertical>
+      <text text="Contributors" font-size="6" size-delta-y="6" />
+      <text text=" - Bobbie#0001 [Mod Creator]" font-size="4" size-delta-y="4" />
+      <text text=" - Auros#0001 [UI and Refactor]" font-size="4" size-delta-y="4" />
+      <text text="Top Modelers" font-size="6" size-delta-y="6" />
+      <text text=" - Modeler#0001" font-size="4" size-delta-y="4" />
+      <text text=" - Modeler#0001" font-size="4" size-delta-y="4" />
+      <text text=" - Modeler#0001" font-size="4" size-delta-y="4" />
+    </vertical>
+  </horizontal>
+  <text text="Version 0.1.0" align="Right" size-delta-y="4" />
+</vertical>

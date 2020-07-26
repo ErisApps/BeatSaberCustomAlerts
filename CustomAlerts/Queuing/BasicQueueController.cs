@@ -11,18 +11,21 @@ namespace CustomAlerts.Queuing
 {
     public class BasicQueueController : MonoBehaviour, IAlertQueue
     {
+        private ChatService _chatService;
         private StreamlabsClient _streamlabsClient;
         private AlertObjectManager _alertObjectLoader;
         private SynchronizationContext _synchronizationContext;
         private readonly Queue<IAlert> _queuedAlerts = new Queue<IAlert>();
 
         [Inject]
-        public void Construct(StreamlabsClient streamlabsClient, AlertObjectManager alertObjectLoader)
+        public void Construct(ChatService chatService, StreamlabsClient streamlabsClient, AlertObjectManager alertObjectLoader)
         {
+            _chatService = chatService;
             _streamlabsClient = streamlabsClient;
             _alertObjectLoader = alertObjectLoader;
             _synchronizationContext = SynchronizationContext.Current;
 
+            _chatService.OnEvent += OnEvent;
             _streamlabsClient.OnEvent += OnEvent;
 
             Plugin.Log.Notice("Queue Controller Contructed");
@@ -30,12 +33,13 @@ namespace CustomAlerts.Queuing
 
         public void OnDestry()
         {
+            _chatService.OnEvent -= OnEvent;
             _streamlabsClient.OnEvent -= OnEvent;
         }
 
         private void OnEvent(StreamlabsEvent streamlabsEvent)
         {
-            CustomAlert alert = _alertObjectLoader.GetAlertByType(streamlabsEvent.AlertType);
+            CustomAlert alert = _alertObjectLoader.GetAlertByType(streamlabsEvent.AlertType, streamlabsEvent.AlertType == AlertType.ChannelPoints ? streamlabsEvent?.Message[0]?.ChannelPointsName : null);
             AlertData alertData = _alertObjectLoader.Process(alert, streamlabsEvent);
             if (alertData.canSpawn)
             {
@@ -76,6 +80,5 @@ namespace CustomAlerts.Queuing
         }
 
         void SafeInvokeSpawn(object alert) { (alert as IAlert).Spawn(); }
-        void SafeInvokeDespawn(object alert) { (alert as IAlert).Destroy(); }
     }
 }

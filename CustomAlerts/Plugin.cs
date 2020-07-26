@@ -1,19 +1,17 @@
 ﻿using IPA;
-using Zenject;
 using ChatCore;
+using UnityEngine;
+using System.Linq;
+using CustomAlerts.UI;
 using IPA.Config.Stores;
 using ChatCore.Services;
-using ChatCore.Interfaces;
-using CustomAlerts.Queuing;
 using CustomAlerts.Installers;
+using BeatSaberMarkupLanguage;
 using Conf = IPA.Config.Config;
 using CustomAlerts.Configuration;
-using UnityEngine.SceneManagement;
 using IPALogger = IPA.Logging.Logger;
+using BeatSaberMarkupLanguage.MenuButtons;
 using Installer = SiraUtil.Zenject.Installer;
-using CustomAlerts.Utilities;
-using CustomAlerts.Streamlabs;
-using UnityEngine;
 
 namespace CustomAlerts
 {
@@ -22,12 +20,8 @@ namespace CustomAlerts
     {
         internal static IPALogger Log { get; private set; }
         internal static Plugin Instance { get; private set; }
+        internal static MenuButton MenuButton { get; set; }
         internal static ChatServiceMultiplexer ChatCoreMultiplexer { get; set; }
-        internal static ChatService ChatService { get; set; }
-        internal static AlertObjectManager AlertObjectManager { get; set; }
-        internal static IWebSocketService SocketProvider { get; set; }
-        internal static StreamlabsClient StreamlabsClient { get; set; }
-        internal static IAlertQueue AlertQueue { get; set; }
 
         [Init]
         public Plugin(Conf conf, IPALogger logger)
@@ -37,49 +31,39 @@ namespace CustomAlerts
             var chatcore = ChatCoreInstance.Create();
             Config.Instance = conf.Generated<Config>();
             ChatCoreMultiplexer = chatcore.RunAllServices();
-            Installer.RegisterAppInstaller<CustomAlertsInstaller>(OnSceneContextPostInstall);
+
+            MenuButton = new MenuButton("Custom Alerts", ShowMainFlowCoordinator);
         }
 
         [OnEnable]
         public void OnEnable()
         {
-            SceneManager.sceneLoaded += SceneLoaded;
-            //Installer.GetSceneContextAsync(OnSceneContextPostInstall, "PCInit");
-            
-            /*
-            ChatService = new ChatService(Config.Instance, ChatCoreMultiplexer);
-            AlertObjectManager = new AlertObjectManager(Config.Instance);
-            SocketProvider = new WSSSocketProvider();
-            StreamlabsClient = new StreamlabsClient(Config.Instance, SocketProvider);
-            AlertQueue = new GameObject("CustomAlerts | BasicQueueController").AddComponent<BasicQueueController>();
-            Object.DontDestroyOnLoad(AlertQueue as BasicQueueController);*/
-        }
+            Installer.RegisterAppInstaller<CustomAlertsInstaller>();
+            Installer.RegisterMenuInstaller<CustomAlertsMenuInstaller>();
 
-        private void SceneLoaded(Scene scene, LoadSceneMode arg1)
-        {
-            if (scene.name == "PCInit")
-            {
-                //Installer.GetSceneContextAsync(OnSceneContextPostInstall, "PCInit");
-            }
+            MenuButtons.instance.RegisterButton(MenuButton);
         }
 
         [OnDisable]
         public void OnDisable()
         {
-            /*ChatService.Dispose();
-            AlertObjectManager.Dispose();
-            SocketProvider.Dispose();
-            StreamlabsClient.Dispose();
-            Object.Destroy(AlertQueue as BasicQueueController);
-            */
             Installer.UnregisterAppInstaller<CustomAlertsInstaller>();
-            SceneManager.sceneLoaded -= SceneLoaded;
+            Installer.UnregisterAppInstaller<CustomAlertsMenuInstaller>();
+
+            MenuButtons.instance.UnregisterButton(MenuButton);
         }
 
-        private void OnSceneContextPostInstall(SceneContext context)
+        public void ShowMainFlowCoordinator()
         {
-            //context.Container.Install<CustomAlertsInstallerNormal>();
-            //context.Container.Resolve<IAlertQueue>();
+            CustomAlertsFlowCoordinator flowCoordinator = Resources.FindObjectsOfTypeAll<CustomAlertsFlowCoordinator>().FirstOrDefault();
+            if (flowCoordinator != null)
+            {
+                BeatSaberUI.MainFlowCoordinator.PresentFlowCoordinator(flowCoordinator);
+            }
+            else
+            {
+                Log.Error("Unable to find flow coordinator! Cannot show Custom Alerts Flow Coordinator.");
+            }
         }
     }
 }

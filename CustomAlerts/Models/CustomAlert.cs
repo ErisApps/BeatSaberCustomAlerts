@@ -16,9 +16,29 @@ namespace CustomAlerts.Models
         public AlertDescriptor Descriptor { get; }
         public string ChannelPointsUser { get; set; }
         public StreamlabsEvent StreamEvent { get; set; }
-        public AlertType AlertType => StreamEvent.AlertType;
+        public AlertType AlertType
+        {
+            get => StreamEvent == null ? Descriptor.alertTriggerType : StreamEvent.AlertType;
+        }
         public float Lifeline => Descriptor.alertLifetime;
-        public float Flatline { get; set; }
+        public float Flatline { get; set; } = 0f;
+
+        private Sprite _sprite;
+        public Sprite Sprite
+        {
+            get
+            {
+                if (_sprite == null && Descriptor != null && Descriptor.icon != null)
+                {
+                    _sprite = BeatSaberMarkupLanguage.Utilities.LoadSpriteFromTexture(Descriptor.icon);
+                }
+                else if (_sprite == null)
+                {
+                    _sprite = BeatSaberMarkupLanguage.Utilities.ImageResources.BlankSprite;
+                }
+                return _sprite;
+            }
+        }
 
         public CustomAlert(string fileName)
         {
@@ -92,17 +112,22 @@ namespace CustomAlerts.Models
                 GameObject spawned = UnityEngine.Object.Instantiate(GameObject);
                 spawned.transform.SetParent(null);
                 UnityEngine.Object.DontDestroyOnLoad(spawned);
-                foreach (TextMeshPro textMesh in spawned.GetComponentsInChildren<TextMeshPro>())
+
+                if (StreamEvent != null)
                 {
-                    string[,] replacementStrings = {
+                    foreach (TextMeshPro textMesh in spawned.GetComponentsInChildren<TextMeshPro>())
+                    {
+                        string[,] replacementStrings = {
                         { "username", StreamEvent.Message[0].Name },
                         { "amount", StreamEvent.Message[0].Amount },
                         { "count", StreamEvent.Message[0].Raiders.ToString() },
                         { "channelpoints", StreamEvent.Message[0].ChannelPointsName },
                         { "viewers", StreamEvent.Message[0].Viewers.ToString() }
                     };
-                    textMesh.text = ReplaceText(textMesh.text, replacementStrings);
+                        textMesh.text = ReplaceText(textMesh.text, replacementStrings);
+                    }
                 }
+                
                 if (Descriptor.alertTriggerType == AlertType.Bits)
                 {
                     int[] bitTypes = { 100000, 10000, 5000, 1000, 100, 10 };
@@ -113,18 +138,21 @@ namespace CustomAlerts.Models
                             spawned.transform.Find(bitType.ToString()).gameObject.SetActive(false);
                         }
                     }
-                    if (int.Parse(StreamEvent.Message[0].Amount) < bitTypes[bitTypes.Length - 1])
+                    if (StreamEvent != null)
                     {
-                        spawned.transform.Find(bitTypes[bitTypes.Length - 1].ToString()).gameObject.SetActive(true);
-                    }
-                    else
-                    {
-                        foreach (int bitType in bitTypes)
+                        if (int.Parse(StreamEvent.Message[0].Amount) < bitTypes[bitTypes.Length - 1])
                         {
-                            if (int.Parse(StreamEvent.Message[0].Amount) >= bitType)
+                            spawned.transform.Find(bitTypes[bitTypes.Length - 1].ToString()).gameObject.SetActive(true);
+                        }
+                        else
+                        {
+                            foreach (int bitType in bitTypes)
                             {
-                                spawned.transform.Find(bitType.ToString()).gameObject.SetActive(true);
-                                break;
+                                if (int.Parse(StreamEvent.Message[0].Amount) >= bitType)
+                                {
+                                    spawned.transform.Find(bitType.ToString()).gameObject.SetActive(true);
+                                    break;
+                                }
                             }
                         }
                     }
