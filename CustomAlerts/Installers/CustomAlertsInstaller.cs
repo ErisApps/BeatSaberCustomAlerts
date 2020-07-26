@@ -9,13 +9,13 @@ namespace CustomAlerts.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInstance(Configuration.Config.Instance).AsSingle();
-            Container.BindInterfacesAndSelfTo<ChatService>().AsSingle();
-            Container.BindInstance(Plugin.ChatCoreMultiplexer).AsSingle();
-            Container.BindInterfacesAndSelfTo<AlertObjectManager>().AsSingle();
-            Container.BindInterfacesAndSelfTo<WSSSocketProvider>().AsSingle();
-            Container.BindInterfacesAndSelfTo<StreamlabsClient>().AsSingle();
-            Container.Bind<IAlertQueue>().To<BasicQueueController>().FromNewComponentOnRoot().AsSingle();
+            Container.BindInstance(Configuration.Config.Instance).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ChatService>().AsSingle().NonLazy();
+            Container.BindInstance(Plugin.ChatCoreMultiplexer).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<AlertObjectManager>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<WSSSocketProvider>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<StreamlabsClient>().AsSingle().NonLazy();
+            Container.Bind<IAlertQueue>().To<BasicQueueController>().FromNewComponentOnRoot().AsSingle().NonLazy();
         }
     }
 }
