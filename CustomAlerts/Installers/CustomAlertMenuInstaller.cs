@@ -10,6 +10,11 @@ namespace CustomAlerts.Installers
     {
         public override void InstallBindings()
         {
+            if (!CustomAlertsInstaller.FirstBindingInstalled)
+            {
+                return;
+            }    
+
             InfoView infoView = BeatSaberUI.CreateViewController<InfoView>();
             AlertListView alertListView = BeatSaberUI.CreateViewController<AlertListView>();
             AlertEditView alertEditView = BeatSaberUI.CreateViewController<AlertEditView>();

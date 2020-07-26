@@ -7,8 +7,11 @@ namespace CustomAlerts.Installers
 {
     public class CustomAlertsInstaller : MonoInstaller
     {
+        public static bool FirstBindingInstalled { get; private set; } = false;
+
         public override void InstallBindings()
         {
+            FirstBindingInstalled = true;
             Container.BindInstance(Configuration.Config.Instance).AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<ChatService>().AsSingle().NonLazy();
             Container.BindInstance(Plugin.ChatCoreMultiplexer).AsSingle().NonLazy();
