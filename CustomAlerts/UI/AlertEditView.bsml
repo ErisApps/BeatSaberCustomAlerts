@@ -1,0 +1,10 @@
+﻿<vertical child-control-height="false" child-expand-height="true" pad="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+  <text text="Settings" align="Center" font-size="10" size-delta-y="15" underlined="true" />
+  <horizontal pad="2" bg="round-rect-panel">
+    <vertical size-delta-x="100" pref-width="100">
+      <text text="~channel-points-name" active="~is-channel" font-size="5" />
+      <checkbox-setting text="Override Delay" value="delay?" on-change="delay-changed" apply-on-change="true" get-event="update"  />
+      <increment-setting text="Delay Override" value="delay" on-change="delay-time-changed" apply-on-change="true" get-event="update" active="~override-delay" increment="1" min="0" />
+    </vertical>
+  </horizontal>
+</vertical>

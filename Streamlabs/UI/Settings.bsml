@@ -1,7 +1,0 @@
-﻿<settings-container>
-  <dropdown-list-setting text='Follow Alert' value='follow-value' options='follow-options'></dropdown-list-setting>
-  <dropdown-list-setting text='Sub Alert' value='sub-value' options='sub-options'></dropdown-list-setting>
-  <dropdown-list-setting text='Bits Alert' value='bit-value' options='bit-options'></dropdown-list-setting>
-  <dropdown-list-setting text='Raid Alert' value='raid-value' options='raid-options'></dropdown-list-setting>
-  <dropdown-list-setting text='Host Alert' value='host-value' options='host-options'></dropdown-list-setting>
-</settings-container>

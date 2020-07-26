@@ -1,0 +1,25 @@
+﻿<vertical child-expand-width="true" pad-top="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+  <horizontal child-control-width="true">
+    <img id="alert-image" pref-width="10" pref-height="10"/>
+    <vertical bg="round-rect-panel" pref-width="55" pad="2">
+      <text text="~alert-title" align="Center" font-size="5" />
+      <text text="~alert-author" align="Center" />
+    </vertical>
+  </horizontal>
+  <vertical bg="round-rect-panel" pref-width="70" pad="2">
+    <text text="~alert-description" align="Left" />
+  </vertical>
+  <horizontal bg="round-rect-panel" pad="4">
+    <button text="~toggle-text" glow-color="~toggle-color" pref-height="10" on-click="toggle-enable" />
+    <button text="Preview" pref-height="10" on-click="preview" />
+  </horizontal>
+  <modal show-event="show-warning" hide-event="hide-warning" size-delta-x="90" size-delta-y="50">
+    <vertical pref-width="80">
+      <text text="~modal-text" align="Center" size-delta-x="80" />
+      <horizontal>
+        <button glow-color="red" text="Cancel" on-click="close-warning" />
+        <button glow-color="green" text="Confirm" on-click="set-enable" />
+      </horizontal>
+    </vertical>
+  </modal>
+</vertical>
