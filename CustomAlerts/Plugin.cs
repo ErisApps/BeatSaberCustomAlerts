@@ -15,7 +15,7 @@ using Installer = SiraUtil.Zenject.Installer;
 
 namespace CustomAlerts
 {
-    [Plugin(RuntimeOptions.SingleStartInit)]
+    [Plugin(RuntimeOptions.DynamicInit)]
     public class Plugin
     {
         internal static IPALogger Log { get; private set; }
