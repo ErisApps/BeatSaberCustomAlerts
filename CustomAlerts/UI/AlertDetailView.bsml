@@ -1,7 +1,7 @@
 ﻿<vertical child-expand-width="true" pad-top="2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
-  <horizontal child-control-width="true">
-    <img id="alert-image" pref-width="10" pref-height="10"/>
-    <vertical bg="round-rect-panel" pref-width="55" pad="2">
+  <horizontal child-control-width="true" spacing="2">
+    <img id="alert-image" pref-width="18" pref-height="10"/>
+    <vertical bg="round-rect-panel" pref-width="50" pad="2">
       <text text="~alert-title" align="Center" font-size="5" />
       <text text="~alert-author" align="Center" />
     </vertical>
