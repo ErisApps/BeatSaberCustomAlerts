@@ -125,7 +125,7 @@ namespace CustomAlerts.Utilities
             AlertValue value;
             if (!string.IsNullOrEmpty(valueSpecific))
             {
-                value = _config.Alerts.FirstOrDefault(a => a.Enabled == true && a.AlertType == type && a.Value == valueSpecific);
+                value = _config.Alerts.FirstOrDefault(a => a.Enabled == true && a.AlertType == type && a.Value.ToLower().Trim() == valueSpecific.ToLower().Trim());
             }
             else
             {
