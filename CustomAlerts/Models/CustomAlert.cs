@@ -100,6 +100,27 @@ namespace CustomAlerts.Models
             return original;
         }
 
+        public StreamlabsEvent generateDummyEvent()
+        {
+            string[] dummyBitTypes = { "100000", "10000", "5000", "1000", "100", "10" };
+
+            StreamlabsEvent streamEvent = new StreamlabsEvent
+            {
+                Type = "other",
+                Message = new Message[1]
+            };
+            streamEvent.Message[0] = new Message
+            {
+                Name = UnityEngine.Random.Range(0, 1000) == 0 ? "Ninja" : "username",
+                ChannelPointsName = Descriptor.channelPointsName,
+                Amount = dummyBitTypes[UnityEngine.Random.Range(0, dummyBitTypes.Length)],
+                Raiders = UnityEngine.Random.Range(0, 5000),
+                Viewers = UnityEngine.Random.Range(0, 5000)
+            };
+
+            return streamEvent;
+        }
+
         public void Spawn()
         {
             try
@@ -112,20 +133,18 @@ namespace CustomAlerts.Models
                 GameObject spawned = UnityEngine.Object.Instantiate(GameObject);
                 spawned.transform.SetParent(null);
                 UnityEngine.Object.DontDestroyOnLoad(spawned);
+                if (StreamEvent == null) StreamEvent = generateDummyEvent();
 
-                if (StreamEvent != null)
+                foreach (TextMeshPro textMesh in spawned.GetComponentsInChildren<TextMeshPro>())
                 {
-                    foreach (TextMeshPro textMesh in spawned.GetComponentsInChildren<TextMeshPro>())
-                    {
-                        string[,] replacementStrings = {
-                        { "username", StreamEvent.Message[0].Name },
-                        { "amount", StreamEvent.Message[0].Amount },
-                        { "count", StreamEvent.Message[0].Raiders.ToString() },
-                        { "channelpoints", StreamEvent.Message[0].ChannelPointsName },
-                        { "viewers", StreamEvent.Message[0].Viewers.ToString() }
-                    };
-                        textMesh.text = ReplaceText(textMesh.text, replacementStrings);
-                    }
+                    string[,] replacementStrings = {
+                    { "username", StreamEvent.Message[0].Name },
+                    { "amount", StreamEvent.Message[0].Amount },
+                    { "count", StreamEvent.Message[0].Raiders.ToString() },
+                    { "channelpoints", StreamEvent.Message[0].ChannelPointsName },
+                    { "viewers", StreamEvent.Message[0].Viewers.ToString() }
+                };
+                    textMesh.text = ReplaceText(textMesh.text, replacementStrings);
                 }
                 
                 if (Descriptor.alertTriggerType == AlertType.Bits)
