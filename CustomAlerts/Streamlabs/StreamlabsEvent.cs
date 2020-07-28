@@ -19,6 +19,8 @@
                         return AlertType.Follow;
                     case "subscription":
                         return AlertType.Subscription;
+                    case "resub":
+                        return AlertType.Subscription;
                     case "donation":
                         return AlertType.Donation;
                     case "bits":
