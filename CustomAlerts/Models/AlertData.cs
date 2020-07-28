@@ -4,5 +4,6 @@
     {
         public float delay;
         public bool canSpawn;
+        public int volume;
     }
 }

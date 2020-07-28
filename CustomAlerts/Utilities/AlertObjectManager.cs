@@ -116,6 +116,7 @@ namespace CustomAlerts.Utilities
                     data.canSpawn = alert.Descriptor.channelPointsName.ToLower().Trim() == streamEvent.Message[0].ChannelPointsName.ToLower().Trim();
                 }
                 data.delay = value.OverrideDelay ? value.DelayOverrideTime : _config.AlertDelay;
+                data.volume = value.Volume;
             }
             return data;
         }

@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Collections;
 using CustomAlerts.Models;
 using CustomAlerts.Queuing;
+using CustomAlerts.Utilities;
+using CustomAlerts.Streamlabs;
 using BeatSaberMarkupLanguage;
 
 namespace CustomAlerts.UI
@@ -47,10 +49,31 @@ namespace CustomAlerts.UI
             _alertDetailView.PreviewPressed += AlertDetailView_RequestedPreview;
         }
 
+        public StreamlabsEvent generatePreviewEvent(string channelPointsName)
+        {
+            string[] dummyBitTypes = { "100000", "10000", "5000", "1000", "100", "10" };
+
+            StreamlabsEvent streamEvent = new StreamlabsEvent
+            {
+                Type = "other",
+                Message = new Message[1]
+            };
+            streamEvent.Message[0] = new Message
+            {
+                Name = UnityEngine.Random.Range(0, 1000) == 0 ? "Ninja" : "username",
+                ChannelPointsName = channelPointsName,
+                Amount = dummyBitTypes[UnityEngine.Random.Range(0, dummyBitTypes.Length)],
+                Raiders = UnityEngine.Random.Range(0, 5000),
+                Viewers = UnityEngine.Random.Range(0, 5000)
+            };
+
+            return streamEvent;
+        }
+
         private void AlertDetailView_RequestedPreview(CustomAlert alert)
         {
             HideAllScreens(alert.Lifeline);
-            _alertQueue.Enqueue(new CustomAlert(alert.GameObject, alert.Descriptor, null));
+            _alertQueue.Enqueue(new CustomAlert(alert.GameObject, alert.Descriptor, generatePreviewEvent(alert.Descriptor.channelPointsName)){ Volume = _alertEditView.Volume });
         }
 
         protected override void DidDeactivate(DeactivationType deactivationType)

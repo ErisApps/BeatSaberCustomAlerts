@@ -22,6 +22,7 @@ namespace CustomAlerts.Models
         }
         public float Lifeline => Descriptor.alertLifetime;
         public float Flatline { get; set; } = 0f;
+        public int Volume { get; set; } = 100;
 
         private Sprite _sprite;
         public Sprite Sprite
@@ -100,27 +101,6 @@ namespace CustomAlerts.Models
             return original;
         }
 
-        public StreamlabsEvent generateDummyEvent()
-        {
-            string[] dummyBitTypes = { "100000", "10000", "5000", "1000", "100", "10" };
-
-            StreamlabsEvent streamEvent = new StreamlabsEvent
-            {
-                Type = "other",
-                Message = new Message[1]
-            };
-            streamEvent.Message[0] = new Message
-            {
-                Name = UnityEngine.Random.Range(0, 1000) == 0 ? "Ninja" : "username",
-                ChannelPointsName = Descriptor.channelPointsName,
-                Amount = dummyBitTypes[UnityEngine.Random.Range(0, dummyBitTypes.Length)],
-                Raiders = UnityEngine.Random.Range(0, 5000),
-                Viewers = UnityEngine.Random.Range(0, 5000)
-            };
-
-            return streamEvent;
-        }
-
         public void Spawn()
         {
             try
@@ -131,22 +111,28 @@ namespace CustomAlerts.Models
                     return;
                 }
                 GameObject spawned = UnityEngine.Object.Instantiate(GameObject);
+                // apply volume before the audiosources activate
+                foreach (AudioSource audioSource in spawned.GetComponentsInChildren<AudioSource>())
+                {
+                    float adjustedVolume = audioSource.volume * (Volume / 100f);
+                    audioSource.volume = adjustedVolume <= 1 ? adjustedVolume : 1;
+                }
                 spawned.transform.SetParent(null);
                 UnityEngine.Object.DontDestroyOnLoad(spawned);
-                if (StreamEvent == null) StreamEvent = generateDummyEvent();
-
-                foreach (TextMeshPro textMesh in spawned.GetComponentsInChildren<TextMeshPro>())
+                if (StreamEvent != null)
                 {
-                    string[,] replacementStrings = {
-                    { "username", StreamEvent.Message[0].Name },
-                    { "amount", StreamEvent.Message[0].Amount },
-                    { "count", StreamEvent.Message[0].Raiders.ToString() },
-                    { "channelpoints", StreamEvent.Message[0].ChannelPointsName },
-                    { "viewers", StreamEvent.Message[0].Viewers.ToString() }
-                };
-                    textMesh.text = ReplaceText(textMesh.text, replacementStrings);
+                    foreach (TextMeshPro textMesh in spawned.GetComponentsInChildren<TextMeshPro>())
+                    {
+                        string[,] replacementStrings = {
+                            { "username", StreamEvent.Message[0].Name },
+                            { "amount", StreamEvent.Message[0].Amount },
+                            { "count", StreamEvent.Message[0].Raiders.ToString() },
+                            { "channelpoints", StreamEvent.Message[0].ChannelPointsName },
+                            { "viewers", StreamEvent.Message[0].Viewers.ToString() }
+                        };
+                        textMesh.text = ReplaceText(textMesh.text, replacementStrings);
+                    }
                 }
-                
                 if (Descriptor.alertTriggerType == AlertType.Bits)
                 {
                     int[] bitTypes = { 100000, 10000, 5000, 1000, 100, 10 };

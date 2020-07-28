@@ -20,6 +20,9 @@ namespace CustomAlerts.UI
         [UIValue("delay")]
         protected float Delay { get; set; }
 
+        [UIValue("volume")]
+        public int Volume { get; set; }
+
         private string _channelPointsName;
         [UIValue("channel-points-name")]
         protected string ChannelPointsName
@@ -74,6 +77,15 @@ namespace CustomAlerts.UI
             }
         }
 
+        [UIAction("volume-changed")]
+        protected void VolumeChanged(int volumeValue)
+        {
+            if (currentAlertValue != null)
+            {
+                currentAlertValue.Volume = volumeValue;
+            }
+        }
+
         protected AlertValue currentAlertValue;
         private AlertObjectManager _alertObjectManager;
 
@@ -100,6 +112,7 @@ namespace CustomAlerts.UI
             }
             Delay = currentAlertValue.DelayOverrideTime;
             DelayOverridden = IsDelayOverridden = currentAlertValue.OverrideDelay;
+            Volume = currentAlertValue.Volume;
             parserParams.EmitEvent("update");
         }
     }

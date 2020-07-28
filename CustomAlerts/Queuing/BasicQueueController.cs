@@ -45,7 +45,8 @@ namespace CustomAlerts.Queuing
             {
                 CustomAlert newAlert = new CustomAlert(alert.GameObject, alert.Descriptor, streamlabsEvent)
                 {
-                    Flatline = alertData.delay
+                    Flatline = alertData.delay,
+                    Volume = alertData.volume
                 };
                 
                 Enqueue(newAlert);
