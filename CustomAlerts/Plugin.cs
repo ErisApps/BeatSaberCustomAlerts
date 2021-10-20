@@ -8,10 +8,10 @@ using ChatCore.Services;
 using CustomAlerts.Installers;
 using BeatSaberMarkupLanguage;
 using Conf = IPA.Config.Config;
-using CustomAlerts.Configuration;
 using IPALogger = IPA.Logging.Logger;
 using BeatSaberMarkupLanguage.MenuButtons;
-using Installer = SiraUtil.Zenject.Installer;
+using SiraUtil.Zenject;
+using Config = CustomAlerts.Configuration.Config;
 
 namespace CustomAlerts
 {
@@ -19,18 +19,18 @@ namespace CustomAlerts
     public class Plugin
     {
         internal static IPALogger Log { get; private set; }
-        internal static Plugin Instance { get; private set; }
         internal static MenuButton MenuButton { get; set; }
         internal static ChatServiceMultiplexer ChatCoreMultiplexer { get; set; }
 
         [Init]
-        public Plugin(Conf conf, IPALogger logger)
+        public Plugin(Conf conf, IPALogger logger, Zenjector zenjector)
         {
             Log = logger;
-            Instance = this;
             var chatcore = ChatCoreInstance.Create();
-            Config.Instance = conf.Generated<Config>();
             ChatCoreMultiplexer = chatcore.RunAllServices();
+
+            zenjector.OnApp<CustomAlertsInstaller>().WithParameters(conf.Generated<Config>());
+            zenjector.OnMenu<CustomAlertsMenuInstaller>();
 
             MenuButton = new MenuButton("Custom Alerts", ShowMainFlowCoordinator);
         }
@@ -38,18 +38,12 @@ namespace CustomAlerts
         [OnEnable]
         public void OnEnable()
         {
-            Installer.RegisterAppInstaller<CustomAlertsInstaller>();
-            Installer.RegisterMenuInstaller<CustomAlertsMenuInstaller>();
-
             MenuButtons.instance.RegisterButton(MenuButton);
         }
 
         [OnDisable]
         public void OnDisable()
         {
-            Installer.UnregisterAppInstaller<CustomAlertsInstaller>();
-            Installer.UnregisterAppInstaller<CustomAlertsMenuInstaller>();
-
             MenuButtons.instance.UnregisterButton(MenuButton);
         }
 

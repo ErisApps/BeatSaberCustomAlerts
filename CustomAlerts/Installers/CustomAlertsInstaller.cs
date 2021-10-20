@@ -1,18 +1,23 @@
-﻿using Zenject;
+﻿using CustomAlerts.Configuration;
+using Zenject;
 using CustomAlerts.Queuing;
 using CustomAlerts.Utilities;
 using CustomAlerts.Streamlabs;
 
 namespace CustomAlerts.Installers
 {
-    public class CustomAlertsInstaller : MonoInstaller
+    internal class CustomAlertsInstaller : Installer
     {
-        public static bool FirstBindingInstalled { get; private set; } = false;
+        private readonly Config _config;
+
+        public CustomAlertsInstaller(Config config)
+        {
+            _config = config;
+        }
 
         public override void InstallBindings()
         {
-            FirstBindingInstalled = true;
-            Container.BindInstance(Configuration.Config.Instance).AsSingle().NonLazy();
+            Container.BindInstance(_config).AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<ChatService>().AsSingle().NonLazy();
             Container.BindInstance(Plugin.ChatCoreMultiplexer).AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<AlertObjectManager>().AsSingle().NonLazy();
