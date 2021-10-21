@@ -1,14 +1,12 @@
 ﻿namespace CustomAlerts.Streamlabs
 {
-    public class StreamlabsEvent
+    public class TwitchEvent
     {
-        public string Type { get; set; }
-        public string EventID { get; set; }
-        public string EventFor { get; set; }
+        public AlertType AlertType { get; set; }
         public Message[] Message { get; set; }
 
-        public AlertType AlertType
-        {
+        // TODO: Remove commented code
+        /*{
             get
             {
                 switch (Type)
@@ -33,6 +31,6 @@
                         return AlertType.Other;
                 }
             }
-        }
+        }*/
     }
 }

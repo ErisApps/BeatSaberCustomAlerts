@@ -15,11 +15,8 @@ namespace CustomAlerts.Models
         public AssetBundle AssetBundle { get; }
         public AlertDescriptor Descriptor { get; }
         public string ChannelPointsUser { get; set; }
-        public StreamlabsEvent StreamEvent { get; set; }
-        public AlertType AlertType
-        {
-            get => StreamEvent == null ? Descriptor.alertTriggerType : StreamEvent.AlertType;
-        }
+        public TwitchEvent StreamEvent { get; set; }
+        public AlertType AlertType => StreamEvent?.AlertType ?? Descriptor.alertTriggerType;
         public float Lifeline => Descriptor.alertLifetime;
         public float Flatline { get; set; } = 0f;
         public int Volume { get; set; } = 100;
@@ -67,11 +64,11 @@ namespace CustomAlerts.Models
             }
         }
 
-        public CustomAlert(GameObject @object, AlertDescriptor descriptor, StreamlabsEvent streamlabsEvent)
+        public CustomAlert(GameObject @object, AlertDescriptor descriptor, TwitchEvent twitchEvent)
         {
             GameObject = @object;
             Descriptor = descriptor;
-            StreamEvent = streamlabsEvent;
+            StreamEvent = twitchEvent;
         }
 
         public static TMP_Text CreateText(RectTransform rectTransform, Vector3 anchoredPosition)
@@ -110,14 +107,14 @@ namespace CustomAlerts.Models
                     Plugin.Log.Warn("CustomAlert game object is NOT present.. not spawning");
                     return;
                 }
-                GameObject spawned = UnityEngine.Object.Instantiate(GameObject);
+                GameObject spawned = UnityEngine.Object.Instantiate(GameObject, null, true);
                 // apply volume before the audiosources activate
                 foreach (AudioSource audioSource in spawned.GetComponentsInChildren<AudioSource>())
                 {
                     float adjustedVolume = audioSource.volume * (Volume / 100f);
                     audioSource.volume = adjustedVolume <= 1 ? adjustedVolume : 1;
                 }
-                spawned.transform.SetParent(null);
+
                 UnityEngine.Object.DontDestroyOnLoad(spawned);
                 if (StreamEvent != null)
                 {

@@ -1,8 +1,7 @@
 ﻿using CustomAlerts.Configuration;
-using Zenject;
 using CustomAlerts.Queuing;
 using CustomAlerts.Utilities;
-using CustomAlerts.Streamlabs;
+using Zenject;
 
 namespace CustomAlerts.Installers
 {

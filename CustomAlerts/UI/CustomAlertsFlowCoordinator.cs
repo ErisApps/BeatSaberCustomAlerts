@@ -75,22 +75,24 @@ namespace CustomAlerts.UI
             _alertDetailView.PreviewPressed += AlertDetailView_RequestedPreview;
         }
 
-        public StreamlabsEvent GeneratePreviewEvent(string channelPointsName)
+        public TwitchEvent GeneratePreviewEvent(string channelPointsName)
         {
             string[] dummyBitTypes = { "100000", "10000", "5000", "1000", "100", "10" };
 
-            StreamlabsEvent streamEvent = new StreamlabsEvent
+            TwitchEvent streamEvent = new TwitchEvent
             {
-                Type = "other",
-                Message = new Message[1]
-            };
-            streamEvent.Message[0] = new Message
-            {
-                Name = UnityEngine.Random.Range(0, 1000) == 0 ? "Ninja" : "username",
-                ChannelPointsName = channelPointsName,
-                Amount = dummyBitTypes[UnityEngine.Random.Range(0, dummyBitTypes.Length)],
-                Raiders = UnityEngine.Random.Range(0, 5000),
-                Viewers = UnityEngine.Random.Range(0, 5000)
+                AlertType = AlertType.Other,
+                Message = new []
+                {
+                    new Message
+                    {
+                        Name = UnityEngine.Random.Range(0, 1000) == 0 ? "Ninja" : "username",
+                        ChannelPointsName = channelPointsName,
+                        Amount = dummyBitTypes[UnityEngine.Random.Range(0, dummyBitTypes.Length)],
+                        Raiders = UnityEngine.Random.Range(0, 5000),
+                        Viewers = UnityEngine.Random.Range(0, 5000)
+                    }
+                }
             };
 
             return streamEvent;

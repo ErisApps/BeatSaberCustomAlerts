@@ -33,13 +33,13 @@ namespace CustomAlerts.Queuing
             _chatService.OnEvent -= OnEvent;
         }
 
-        private void OnEvent(StreamlabsEvent streamlabsEvent)
+        private void OnEvent(TwitchEvent twitchEvent)
         {
-            CustomAlert alert = _alertObjectLoader.GetAlertByType(streamlabsEvent.AlertType, streamlabsEvent.AlertType == AlertType.ChannelPoints ? streamlabsEvent?.Message[0]?.ChannelPointsName : null);
-            AlertData alertData = _alertObjectLoader.Process(alert, streamlabsEvent);
+            CustomAlert alert = _alertObjectLoader.GetAlertByType(twitchEvent.AlertType, twitchEvent.AlertType == AlertType.ChannelPoints ? twitchEvent?.Message[0]?.ChannelPointsName : null);
+            AlertData alertData = _alertObjectLoader.Process(alert, twitchEvent);
             if (alertData.canSpawn)
             {
-                CustomAlert newAlert = new CustomAlert(alert.GameObject, alert.Descriptor, streamlabsEvent)
+                CustomAlert newAlert = new CustomAlert(alert.GameObject, alert.Descriptor, twitchEvent)
                 {
                     Flatline = alertData.delay,
                     Volume = alertData.volume

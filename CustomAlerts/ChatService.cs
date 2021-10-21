@@ -4,23 +4,20 @@ using ChatCore.Services;
 using ChatCore.Interfaces;
 using ChatCore.Models.Twitch;
 using CustomAlerts.Streamlabs;
-using CustomAlerts.Configuration;
 
 namespace CustomAlerts
 {
     internal class ChatService : IDisposable
     {
-        public event Action<StreamlabsEvent> OnEvent;
-        public event Action<StreamlabsEvent> OnNormalEvent;
+        public event Action<TwitchEvent> OnEvent;
+        public event Action<TwitchEvent> OnNormalEvent;
 
-        private readonly PluginConfig _config;
         private readonly string _twitchChannel;
         private readonly ChatServiceMultiplexer _streamingService;
         private readonly SynchronizationContext _synchronizationContext;
 
-        public ChatService(PluginConfig config, ChatServiceMultiplexer streamingService)
+        public ChatService(ChatServiceMultiplexer streamingService)
         {
-            _config = config;
             _streamingService = streamingService;
             
             _synchronizationContext = SynchronizationContext.Current;
@@ -31,41 +28,46 @@ namespace CustomAlerts
         {
             try
             {
-                string[] redeemString = msg.Message.Split(new[] { "redeemed " }, StringSplitOptions.None);
                 if (msg is TwitchMessage twitchMsg)
                 {
                     int bits = twitchMsg.Bits;
                     if (bits > 0)
                     {
-                        StreamlabsEvent streamlabsEvent = new StreamlabsEvent
+                        TwitchEvent twitchEvent = new TwitchEvent
                         {
-                            Type = "bits",
-                            Message = new Message[1]
+                            AlertType = AlertType.Bits,
+                            Message = new []
+                            {
+                                new Message
+                                {
+                                    Name = msg.Sender.UserName,
+                                    Amount = twitchMsg.Bits.ToString()
+                                }
+                            }
                         };
-                        streamlabsEvent.Message[0] = new Message
-                        {
-                            Name = msg.Sender.UserName,
-                            Amount = twitchMsg.Bits.ToString()
-                        };
-                        _synchronizationContext.Send(SafeInvokeNormalStreamEvent, streamlabsEvent);
+                        _synchronizationContext.Send(SafeInvokeNormalStreamEvent, twitchEvent);
                     }
                 }
+
+                string[] redeemString = msg.Message.Split(new[] { "redeemed " }, StringSplitOptions.None);
                 if (redeemString.Length > 1)
                 {
-                    StreamlabsEvent streamlabsEvent = new StreamlabsEvent
+                    TwitchEvent twitchEvent = new TwitchEvent
                     {
-                        Type = "channelpoints",
-                        Message = new Message[1]
+                        AlertType = AlertType.ChannelPoints,
+                        Message = new []
+                        {
+                            new Message
+                            {
+                                Name = redeemString[0].Split(new[] { "] " }, StringSplitOptions.None)[1].Trim(),
+                                ChannelPointsName = redeemString[1].Trim()
+                            }
+                        }
                     };
-                    streamlabsEvent.Message[0] = new Message
-                    {
-                        Name = redeemString[0].Split(new[] { "] " }, StringSplitOptions.None)[1].Trim(),
-                        ChannelPointsName = redeemString[1].Trim()
-                    };
-                    _synchronizationContext.Send(SafeInvokeStreamEvent, streamlabsEvent);
+                    _synchronizationContext.Send(SafeInvokeStreamEvent, twitchEvent);
                 }
-                void SafeInvokeStreamEvent(object streamEvent) => OnEvent?.Invoke(streamEvent as StreamlabsEvent);
-                void SafeInvokeNormalStreamEvent(object streamEvent) => OnNormalEvent?.Invoke(streamEvent as StreamlabsEvent);
+                void SafeInvokeStreamEvent(object streamEvent) => OnEvent?.Invoke(streamEvent as TwitchEvent);
+                void SafeInvokeNormalStreamEvent(object streamEvent) => OnNormalEvent?.Invoke(streamEvent as TwitchEvent);
             }
             catch (Exception e)
             {
