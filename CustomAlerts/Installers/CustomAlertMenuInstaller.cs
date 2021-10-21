@@ -15,7 +15,7 @@ namespace CustomAlerts.Installers
 			Container.Bind<AlertEditView>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<AlertDetailView>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<NavigationController>().FromNewComponentAsViewController().AsSingle();
-			Container.Bind<CustomAlertsFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
+			Container.BindInterfacesTo<CustomAlertsFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
 		}
 	}
 }

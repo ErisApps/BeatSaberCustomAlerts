@@ -1,4 +1,5 @@
-﻿using HMUI;
+﻿using System;
+using HMUI;
 using Zenject;
 using UnityEngine;
 using System.Collections;
@@ -6,10 +7,11 @@ using CustomAlerts.Models;
 using CustomAlerts.Queuing;
 using CustomAlerts.Streamlabs;
 using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.MenuButtons;
 
 namespace CustomAlerts.UI
 {
-    internal class CustomAlertsFlowCoordinator : FlowCoordinator
+    internal class CustomAlertsFlowCoordinator : FlowCoordinator, IInitializable, IDisposable
     {
         private InfoView _infoView;
         private IAlertQueue _alertQueue;
@@ -21,9 +23,11 @@ namespace CustomAlerts.UI
         private HierarchyManager _hierarchyManager;
         private ModalStateManager _modalStateManager;
         private NavigationController _navigationController;
+        private MenuButton _caButton;
 
         [Inject]
-        protected void Construct(InfoView infoView, IAlertQueue alertQueue, AlertListView alertListView, AlertEditView alertEditView, AlertDetailView alertDetailView, HierarchyManager hierarchyManager, ModalStateManager modalStateManager, NavigationController navigationController)
+        protected void Construct(InfoView infoView, IAlertQueue alertQueue, AlertListView alertListView, AlertEditView alertEditView, AlertDetailView alertDetailView, HierarchyManager hierarchyManager,
+            ModalStateManager modalStateManager, NavigationController navigationController)
         {
             _infoView = infoView;
             _alertQueue = alertQueue;
@@ -33,6 +37,28 @@ namespace CustomAlerts.UI
             _hierarchyManager = hierarchyManager;
             _modalStateManager = modalStateManager;
             _navigationController = navigationController;
+            
+            _caButton = new MenuButton("Custom Alerts", OnMenuButtonClick);
+        }
+        
+        public void Initialize()
+        {
+            MenuButtons.instance.RegisterButton(_caButton);
+        }
+
+        public void Dispose()
+        {
+            if (_caButton == null)
+            {
+                return;
+            }
+            
+            if (MenuButtons.IsSingletonAvailable && BSMLParser.IsSingletonAvailable)
+            {
+                MenuButtons.instance.UnregisterButton(_caButton);
+            }
+
+            _caButton = null;
         }
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -141,6 +167,11 @@ namespace CustomAlerts.UI
                 }
                 _hierarchyManager.gameObject.transform.position = Vector3.zero;
             }
-        } 
+        }
+        
+        private void OnMenuButtonClick()
+        {
+            BeatSaberUI.MainFlowCoordinator.PresentFlowCoordinator(this);
+        }
     }
 }
