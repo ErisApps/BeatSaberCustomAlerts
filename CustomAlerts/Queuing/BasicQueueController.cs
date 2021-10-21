@@ -3,8 +3,8 @@ using UnityEngine;
 using System.Threading;
 using System.Collections;
 using CustomAlerts.Models;
+using CustomAlerts.Models.Events;
 using CustomAlerts.Utilities;
-using CustomAlerts.Streamlabs;
 using System.Collections.Generic;
 using System.Linq;
 

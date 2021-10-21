@@ -7,7 +7,7 @@ using CatCore.Models.Twitch.PubSub.Responses;
 using CatCore.Models.Twitch.PubSub.Responses.ChannelPointsChannelV1;
 using CatCore.Services.Interfaces;
 using CatCore.Services.Twitch.Interfaces;
-using CustomAlerts.Streamlabs;
+using CustomAlerts.Models.Events;
 using SiraUtil.Tools;
 
 namespace CustomAlerts

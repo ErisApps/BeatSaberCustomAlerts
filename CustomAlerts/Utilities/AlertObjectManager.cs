@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using IPA.Utilities;
 using CustomAlerts.Models;
-using CustomAlerts.Streamlabs;
+using CustomAlerts.Models.Events;
 using CustomAlerts.Configuration;
 using System.Collections.Generic;
 

@@ -1,10 +1,10 @@
-﻿using TMPro;
-using System;
+﻿using System;
 using System.IO;
-using UnityEngine;
-using IPA.Utilities;
-using CustomAlerts.Streamlabs;
 using BeatSaberMarkupLanguage;
+using CustomAlerts.Models.Events;
+using IPA.Utilities;
+using TMPro;
+using UnityEngine;
 
 namespace CustomAlerts.Models
 {

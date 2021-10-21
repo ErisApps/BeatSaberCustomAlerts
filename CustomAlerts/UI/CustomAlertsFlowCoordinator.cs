@@ -4,8 +4,8 @@ using Zenject;
 using UnityEngine;
 using System.Collections;
 using CustomAlerts.Models;
+using CustomAlerts.Models.Events;
 using CustomAlerts.Queuing;
-using CustomAlerts.Streamlabs;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
 

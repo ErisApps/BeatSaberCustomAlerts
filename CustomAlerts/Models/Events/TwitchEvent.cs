@@ -1,4 +1,4 @@
-﻿namespace CustomAlerts.Streamlabs
+﻿namespace CustomAlerts.Models.Events
 {
     public class TwitchEvent
     {
