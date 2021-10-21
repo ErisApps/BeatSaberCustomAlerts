@@ -1,5 +1,4 @@
-﻿using ChatCore;
-using ChatCore.Services;
+﻿using CatCore;
 using CustomAlerts.Configuration;
 using CustomAlerts.Installers;
 using IPA;
@@ -14,16 +13,13 @@ namespace CustomAlerts
     public class Plugin
     {
         internal static Logger Log { get; private set; }
-        internal static ChatServiceMultiplexer ChatCoreMultiplexer { get; set; }
 
         [Init]
         public Plugin(Config config, Logger logger, Zenjector zenjector)
         {
             Log = logger;
-            var chatcore = ChatCoreInstance.Create();
-            ChatCoreMultiplexer = chatcore.RunAllServices();
 
-            zenjector.OnApp<CustomAlertsInstaller>().WithParameters(config.Generated<PluginConfig>());
+            zenjector.OnApp<CustomAlertsInstaller>().WithParameters(logger, config.Generated<PluginConfig>(), ChatCoreInstance.CreateInstance());
             zenjector.OnMenu<CustomAlertsMenuInstaller>();
         }
 

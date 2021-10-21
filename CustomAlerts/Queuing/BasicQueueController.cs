@@ -6,6 +6,7 @@ using CustomAlerts.Models;
 using CustomAlerts.Utilities;
 using CustomAlerts.Streamlabs;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomAlerts.Queuing
 {
@@ -35,7 +36,7 @@ namespace CustomAlerts.Queuing
 
         private void OnEvent(TwitchEvent twitchEvent)
         {
-            CustomAlert alert = _alertObjectLoader.GetAlertByType(twitchEvent.AlertType, twitchEvent.AlertType == AlertType.ChannelPoints ? twitchEvent?.Message[0]?.ChannelPointsName : null);
+            CustomAlert alert = _alertObjectLoader.GetAlertByType(twitchEvent.AlertType, twitchEvent.AlertType == AlertType.ChannelPoints ? twitchEvent.Message.FirstOrDefault()?.ChannelPointsName : null);
             AlertData alertData = _alertObjectLoader.Process(alert, twitchEvent);
             if (alertData.canSpawn)
             {

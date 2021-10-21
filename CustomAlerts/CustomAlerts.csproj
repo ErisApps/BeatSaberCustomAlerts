@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net472</TargetFramework>
         <OutputType>Library</OutputType>
-        <LangVersion>8</LangVersion>
+        <LangVersion>9</LangVersion>
         <Nullable>disable</Nullable>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <LocalRefsDir Condition="Exists('..\Refs')">..\Refs</LocalRefsDir>
@@ -91,7 +91,7 @@
             <Private>False</Private>
         </Reference>
         <Reference Include="CatCore">
-            <HintPath>$(BeatSaberDir)\Libs\ChatCore.dll</HintPath>
+            <HintPath>$(BeatSaberDir)\Libs\CatCore.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="Zenject">
