@@ -17,5 +17,5 @@
       <text text="" font-size="4" size-delta-y="4" /> <!-- Third top modeler will be added once somebody else creates an alert -->
     </vertical>
   </horizontal>
-  <text text="Version 0.1.0" align="Right" size-delta-y="4" />
+  <text text="~mod-version" align="Right" size-delta-y="4" />
 </vertical>
