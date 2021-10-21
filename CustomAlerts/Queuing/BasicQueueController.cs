@@ -25,10 +25,10 @@ namespace CustomAlerts.Queuing
 
             _chatService.OnEvent += OnEvent;
 
-            Plugin.Log.Notice("Queue Controller Contructed");
+            Plugin.Log.Notice("Queue Controller Constructed");
         }
 
-        public void OnDestry()
+        public void OnDestroy()
         {
             _chatService.OnEvent -= OnEvent;
         }
