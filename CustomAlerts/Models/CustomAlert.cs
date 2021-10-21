@@ -15,8 +15,8 @@ namespace CustomAlerts.Models
         public AssetBundle AssetBundle { get; }
         public AlertDescriptor Descriptor { get; }
         public string ChannelPointsUser { get; set; }
-        public TwitchEvent StreamEvent { get; set; }
-        public AlertType AlertType => StreamEvent?.AlertType ?? Descriptor.alertTriggerType;
+        public TwitchEvent TwitchEvent { get; set; }
+        public AlertType AlertType => TwitchEvent?.AlertType ?? Descriptor.alertTriggerType;
         public float Lifeline => Descriptor.alertLifetime;
         public float Flatline { get; set; } = 0f;
         public int Volume { get; set; } = 100;
@@ -68,7 +68,7 @@ namespace CustomAlerts.Models
         {
             GameObject = @object;
             Descriptor = descriptor;
-            StreamEvent = twitchEvent;
+            TwitchEvent = twitchEvent;
         }
 
         public static TMP_Text CreateText(RectTransform rectTransform, Vector3 anchoredPosition)
@@ -116,16 +116,16 @@ namespace CustomAlerts.Models
                 }
 
                 UnityEngine.Object.DontDestroyOnLoad(spawned);
-                if (StreamEvent != null)
+                if (TwitchEvent != null)
                 {
                     foreach (TextMeshPro textMesh in spawned.GetComponentsInChildren<TextMeshPro>())
                     {
                         string[,] replacementStrings = {
-                            { "username", StreamEvent.Message[0].Name },
-                            { "amount", StreamEvent.Message[0].Amount },
-                            { "count", StreamEvent.Message[0].Raiders.ToString() },
-                            { "channelpoints", StreamEvent.Message[0].ChannelPointsName },
-                            { "viewers", StreamEvent.Message[0].Viewers.ToString() }
+                            { "username", TwitchEvent.Message[0].Name },
+                            { "amount", TwitchEvent.Message[0].Amount },
+                            { "count", TwitchEvent.Message[0].Raiders.ToString() },
+                            { "channelpoints", TwitchEvent.Message[0].ChannelPointsName },
+                            { "viewers", TwitchEvent.Message[0].Viewers.ToString() }
                         };
                         textMesh.text = ReplaceText(textMesh.text, replacementStrings);
                     }
@@ -140,9 +140,9 @@ namespace CustomAlerts.Models
                             spawned.transform.Find(bitType.ToString()).gameObject.SetActive(false);
                         }
                     }
-                    if (StreamEvent != null)
+                    if (TwitchEvent != null)
                     {
-                        if (int.Parse(StreamEvent.Message[0].Amount) < bitTypes[bitTypes.Length - 1])
+                        if (int.Parse(TwitchEvent.Message[0].Amount) < bitTypes[bitTypes.Length - 1])
                         {
                             spawned.transform.Find(bitTypes[bitTypes.Length - 1].ToString()).gameObject.SetActive(true);
                         }
@@ -150,7 +150,7 @@ namespace CustomAlerts.Models
                         {
                             foreach (int bitType in bitTypes)
                             {
-                                if (int.Parse(StreamEvent.Message[0].Amount) >= bitType)
+                                if (int.Parse(TwitchEvent.Message[0].Amount) >= bitType)
                                 {
                                     spawned.transform.Find(bitType.ToString()).gameObject.SetActive(true);
                                     break;

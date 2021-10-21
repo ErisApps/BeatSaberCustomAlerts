@@ -79,7 +79,7 @@ namespace CustomAlerts.UI
         {
             string[] dummyBitTypes = { "100000", "10000", "5000", "1000", "100", "10" };
 
-            TwitchEvent streamEvent = new TwitchEvent
+            return new TwitchEvent
             {
                 AlertType = AlertType.Other,
                 Message = new []
@@ -94,8 +94,6 @@ namespace CustomAlerts.UI
                     }
                 }
             };
-
-            return streamEvent;
         }
 
         private void AlertDetailView_RequestedPreview(CustomAlert alert)

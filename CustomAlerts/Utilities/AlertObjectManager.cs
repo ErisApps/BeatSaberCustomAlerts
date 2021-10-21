@@ -105,7 +105,7 @@ namespace CustomAlerts.Utilities
 			return _config.Alerts.Count(a => a.AlertType == type && a.Enabled);
 		}
 
-		public AlertData Process(CustomAlert alert, TwitchEvent streamEvent)
+		public AlertData Process(CustomAlert alert, TwitchEvent twitchEvent)
 		{
 			AlertData data = new AlertData
 			{
@@ -120,9 +120,9 @@ namespace CustomAlerts.Utilities
 			if (value != null)
 			{
 				data.canSpawn = true;
-				if (value.AlertType == AlertType.ChannelPoints && streamEvent != null)
+				if (value.AlertType == AlertType.ChannelPoints && twitchEvent != null)
 				{
-					data.canSpawn = alert.Descriptor.channelPointsName.ToLower().Trim() == streamEvent.Message[0].ChannelPointsName.ToLower().Trim();
+					data.canSpawn = alert.Descriptor.channelPointsName.ToLower().Trim() == twitchEvent.Message[0].ChannelPointsName.ToLower().Trim();
 				}
 
 				data.delay = value.OverrideDelay ? value.DelayOverrideTime : _config.AlertDelay;

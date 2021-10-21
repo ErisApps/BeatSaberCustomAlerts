@@ -59,7 +59,7 @@ namespace CustomAlerts
 						}
 					};
 
-					_synchronizationContext.Send(SafeInvokeStreamEvent, twitchEvent);
+					_synchronizationContext.Send(SafeInvokeTwitchEvent, twitchEvent);
 
 					return;
 				}
@@ -74,7 +74,7 @@ namespace CustomAlerts
 					// TODO: What about subgifts and anon subs and such?
 					case "sub":
 					case "resub":
-						_synchronizationContext.Send(SafeInvokeStreamEvent, new TwitchEvent
+						_synchronizationContext.Send(SafeInvokeTwitchEvent, new TwitchEvent
 						{
 							AlertType = AlertType.Subscription,
 							Message = new[]
@@ -89,7 +89,7 @@ namespace CustomAlerts
 						break;
 					case "raid":
 						var viewerCount = int.Parse(twitchMessage.Metadata[IrcMessageTags.MSG_PARAM_VIEWER_COUNT]);
-						_synchronizationContext.Send(SafeInvokeStreamEvent, new TwitchEvent
+						_synchronizationContext.Send(SafeInvokeTwitchEvent, new TwitchEvent
 						{
 							AlertType = AlertType.Raids,
 							Message = new[]
@@ -126,7 +126,7 @@ namespace CustomAlerts
 					}
 				}
 			};
-			_synchronizationContext.Send(SafeInvokeStreamEvent, twitchEvent);
+			_synchronizationContext.Send(SafeInvokeTwitchEvent, twitchEvent);
 		}
 
 		private void TwitchPubSub_OnRewardRedeemed(string channelId, RewardRedeemedData rewardRedeemedData)
@@ -143,10 +143,10 @@ namespace CustomAlerts
 					}
 				}
 			};
-			_synchronizationContext.Send(SafeInvokeStreamEvent, twitchEvent);
+			_synchronizationContext.Send(SafeInvokeTwitchEvent, twitchEvent);
 		}
 
-		private void SafeInvokeStreamEvent(object twitchEventObj)
+		private void SafeInvokeTwitchEvent(object twitchEventObj)
 		{
 			var twitchEvent = (TwitchEvent)twitchEventObj;
 			_logger.Logger.Notice($"Handling TwitchEvent of type \"{twitchEvent.AlertType:G}\"");
