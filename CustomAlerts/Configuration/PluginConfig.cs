@@ -9,12 +9,6 @@ namespace CustomAlerts.Configuration
 {
 	internal class PluginConfig
 	{
-		[NonNullable]
-		public virtual Tokens Tokens { get; set; } = new Tokens();
-
-		[NonNullable]
-		public virtual Twitch Twitch { get; set; } = new Twitch();
-
 		[NonNullable, UseConverter(typeof(ListConverter<AlertValue>))]
 		public virtual List<AlertValue> Alerts { get; set; } = new List<AlertValue>();
 
