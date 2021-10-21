@@ -7,13 +7,14 @@ namespace CustomAlerts.UI.Models
     {
         public CustomAlert Alert { get; }
 
-        public ModelCell(CustomAlert alert) : base("", "", null)
+        public ModelCell(CustomAlert alert) : base(alert.Descriptor.alertName, $"{alert.Descriptor.authorName} [{alert.AlertType}]", null)
         {
             Alert = alert;
 
-            text = Alert.Descriptor.alertName;
-            subtext = Alert.Descriptor.authorName + $" [{Alert.AlertType}]";
-            icon = alert.Descriptor.icon;
+            // TODO: Fix icon got changed into Sprite instead of Texture2D
+            /*text = Alert.Descriptor.alertName;
+            subtext = $"{Alert.Descriptor.authorName} [{Alert.AlertType}]";
+            icon = alert.Descriptor.icon;*/
         }
     }
 }

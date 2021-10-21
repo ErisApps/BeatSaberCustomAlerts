@@ -21,8 +21,6 @@ namespace CustomAlerts.Installers
             Container.BindInterfacesAndSelfTo<ChatService>().AsSingle().NonLazy();
             Container.BindInstance(Plugin.ChatCoreMultiplexer).AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<AlertObjectManager>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<WSSSocketProvider>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<StreamlabsClient>().AsSingle().NonLazy();
             Container.Bind<IAlertQueue>().To<BasicQueueController>().FromNewComponentOnRoot().AsSingle().NonLazy();
         }
     }

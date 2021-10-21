@@ -4,7 +4,6 @@ using ChatCore.Services;
 using ChatCore.Interfaces;
 using ChatCore.Models.Twitch;
 using CustomAlerts.Streamlabs;
-using ChatCore.Services.Twitch;
 using CustomAlerts.Configuration;
 
 namespace CustomAlerts
