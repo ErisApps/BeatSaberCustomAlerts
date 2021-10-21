@@ -7,6 +7,7 @@ using CustomAlerts.Models.Events;
 using CustomAlerts.Utilities;
 using System.Collections.Generic;
 using System.Linq;
+using SiraUtil.Tools;
 
 namespace CustomAlerts.Queuing
 {
@@ -18,7 +19,7 @@ namespace CustomAlerts.Queuing
         private readonly Queue<IAlert> _queuedAlerts = new Queue<IAlert>();
 
         [Inject]
-        public void Construct(ChatService chatService, AlertObjectManager alertObjectLoader)
+        public void Construct(SiraLog logger, ChatService chatService, AlertObjectManager alertObjectLoader)
         {
             _chatService = chatService;
             _alertObjectLoader = alertObjectLoader;
@@ -26,7 +27,7 @@ namespace CustomAlerts.Queuing
 
             _chatService.OnEvent += OnEvent;
 
-            Plugin.Log.Notice("Queue Controller Constructed");
+            logger.Logger.Notice("Queue Controller Constructed");
         }
 
         public void OnDestroy()

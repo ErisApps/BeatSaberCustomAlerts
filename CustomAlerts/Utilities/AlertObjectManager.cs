@@ -6,18 +6,21 @@ using CustomAlerts.Models;
 using CustomAlerts.Models.Events;
 using CustomAlerts.Configuration;
 using System.Collections.Generic;
+using SiraUtil.Tools;
 
 namespace CustomAlerts.Utilities
 {
 	internal class AlertObjectManager : IDisposable
 	{
+		private readonly SiraLog _logger;
 		private readonly PluginConfig _config;
 		public bool Loaded { get; private set; } = false;
 		public IList<CustomAlert> Alerts { get; private set; }
 		public IEnumerable<string> CustomAlertFiles { get; private set; }
 
-		public AlertObjectManager(PluginConfig config)
+		public AlertObjectManager(SiraLog logger, PluginConfig config)
 		{
+			_logger = logger;
 			_config = config;
 			Alerts = new List<CustomAlert>();
 			CustomAlertFiles = Enumerable.Empty<string>();
@@ -29,13 +32,13 @@ namespace CustomAlerts.Utilities
 		{
 			if (!Loaded)
 			{
-				Plugin.Log.Notice("Object Manager Loading...");
+				_logger.Logger.Notice("Object Manager Loading...");
 				string assetPath = Path.Combine(UnityGame.UserDataPath, "CustomAlerts");
 				Directory.CreateDirectory(assetPath);
 
 				IEnumerable<string> alertFilter = new List<string> { "*.alert" };
 				CustomAlertFiles = GetFileNames(assetPath, alertFilter, SearchOption.AllDirectories, true).ToList();
-				Plugin.Log.Notice($"{CustomAlertFiles.Count()} alert(s) found.");
+				_logger.Logger.Notice($"{CustomAlertFiles.Count()} alert(s) found.");
 
 				Alerts = LoadCustomAlerts(CustomAlertFiles);
 
@@ -63,11 +66,11 @@ namespace CustomAlerts.Utilities
 		{
 			if (Loaded)
 			{
-				Plugin.Log.Notice("Object Manager Unloading...");
+				_logger.Logger.Notice("Object Manager Unloading...");
 				Alerts.ToList().ForEach(a =>
 				{
 					a.Destroy();
-					Plugin.Log.Info("Destroyed: " + a.FileName);
+					_logger.Info("Destroyed: " + a.FileName);
 				});
 				Alerts.Clear();
 				CustomAlertFiles = Enumerable.Empty<string>();
@@ -193,7 +196,7 @@ namespace CustomAlerts.Utilities
 				}
 				catch (Exception e)
 				{
-					Plugin.Log.Warn($"Failed to load Custom Alert with the name {caf}. {e.Message}");
+					_logger.Warning($"Failed to load Custom Alert with the name {caf}. {e.Message}");
 				}
 			}
 
@@ -203,7 +206,7 @@ namespace CustomAlerts.Utilities
 		public void Dispose()
 		{
 			Unload(); //woopsBiggasm
-			Plugin.Log.Info("Unloading Complete");
+			_logger.Info("Unloading Complete");
 		}
 	}
 }
