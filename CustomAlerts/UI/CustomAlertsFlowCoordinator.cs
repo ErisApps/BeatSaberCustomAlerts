@@ -4,13 +4,12 @@ using UnityEngine;
 using System.Collections;
 using CustomAlerts.Models;
 using CustomAlerts.Queuing;
-using CustomAlerts.Utilities;
 using CustomAlerts.Streamlabs;
 using BeatSaberMarkupLanguage;
 
 namespace CustomAlerts.UI
 {
-    public class CustomAlertsFlowCoordinator : FlowCoordinator
+    internal class CustomAlertsFlowCoordinator : FlowCoordinator
     {
         private InfoView _infoView;
         private IAlertQueue _alertQueue;
@@ -36,12 +35,13 @@ namespace CustomAlerts.UI
             _navigationController = navigationController;
         }
 
-        protected override void DidActivate(bool firstActivation, ActivationType activationType)
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             if (firstActivation)
             {
                 showBackButton = true;
-                title = "Custom Alerts";
+                SetTitle("Custom Alerts");
+
                 ProvideInitialViewControllers(_navigationController, _infoView);
                 PushViewControllerToNavigationController(_navigationController, _alertListView);
             }
@@ -49,7 +49,7 @@ namespace CustomAlerts.UI
             _alertDetailView.PreviewPressed += AlertDetailView_RequestedPreview;
         }
 
-        public StreamlabsEvent generatePreviewEvent(string channelPointsName)
+        public StreamlabsEvent GeneratePreviewEvent(string channelPointsName)
         {
             string[] dummyBitTypes = { "100000", "10000", "5000", "1000", "100", "10" };
 
@@ -73,14 +73,14 @@ namespace CustomAlerts.UI
         private void AlertDetailView_RequestedPreview(CustomAlert alert)
         {
             HideAllScreens(alert.Lifeline);
-            _alertQueue.Enqueue(new CustomAlert(alert.GameObject, alert.Descriptor, generatePreviewEvent(alert.Descriptor.channelPointsName)){ Volume = _alertEditView.Volume });
+            _alertQueue.Enqueue(new CustomAlert(alert.GameObject, alert.Descriptor, GeneratePreviewEvent(alert.Descriptor.channelPointsName)){ Volume = _alertEditView.Volume });
         }
 
-        protected override void DidDeactivate(DeactivationType deactivationType)
+        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
         {
             if (!_modalStateManager.IsPresented)
             {
-                base.DidDeactivate(deactivationType);
+                base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
                 _alertListView.DidSelectAlert -= AlertListView_SelectedAlert;
                 _alertDetailView.PreviewPressed -= AlertDetailView_RequestedPreview;
                 ForceUnhideScreen();
@@ -101,7 +101,7 @@ namespace CustomAlerts.UI
             _alertDetailView.SetAlert(alert);
             if (!_alertEditView.isInViewControllerHierarchy)
             {
-                SetRightScreenViewController(_alertEditView);
+                SetRightScreenViewController(_alertEditView, ViewController.AnimationType.In);
             }
             _alertEditView.SetAlert(alert);
         }

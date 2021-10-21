@@ -9,14 +9,14 @@ using System.Collections.Generic;
 
 namespace CustomAlerts.Utilities
 {
-    public class AlertObjectManager : IDisposable
+    internal class AlertObjectManager : IDisposable
     {
-        private readonly Config _config;
+        private readonly PluginConfig _config;
         public bool Loaded { get; private set; } = false;
         public IList<CustomAlert> Alerts { get; private set; }
         public IEnumerable<string> CustomAlertFiles { get; private set; }
 
-        public AlertObjectManager(Config config)
+        public AlertObjectManager(PluginConfig config)
         {
             _config = config;
             Alerts = new List<CustomAlert>();

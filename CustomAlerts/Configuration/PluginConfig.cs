@@ -7,7 +7,7 @@ using IPA.Config.Stores.Converters;
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace CustomAlerts.Configuration
 {
-	internal class Config
+	internal class PluginConfig
 	{
 		[NonNullable]
 		public virtual Tokens Tokens { get; set; } = new Tokens();

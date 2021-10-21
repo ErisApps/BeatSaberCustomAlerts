@@ -9,7 +9,7 @@ using BeatSaberMarkupLanguage.ViewControllers;
 namespace CustomAlerts.UI
 {
     [HotReload]
-    public class AlertEditView : BSMLAutomaticViewController
+    internal class AlertEditView : BSMLAutomaticViewController
     {
         [UIParams]
         protected BSMLParserParams parserParams;

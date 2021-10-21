@@ -9,17 +9,17 @@ using CustomAlerts.Configuration;
 
 namespace CustomAlerts
 {
-    public class ChatService : IDisposable
+    internal class ChatService : IDisposable
     {
         public event Action<StreamlabsEvent> OnEvent;
         public event Action<StreamlabsEvent> OnNormalEvent;
 
-        private readonly Config _config;
+        private readonly PluginConfig _config;
         private readonly string _twitchChannel;
         private readonly ChatServiceMultiplexer _streamingService;
         private readonly SynchronizationContext _synchronizationContext;
 
-        public ChatService(Config config, ChatServiceMultiplexer streamingService)
+        public ChatService(PluginConfig config, ChatServiceMultiplexer streamingService)
         {
             _config = config;
             _streamingService = streamingService;

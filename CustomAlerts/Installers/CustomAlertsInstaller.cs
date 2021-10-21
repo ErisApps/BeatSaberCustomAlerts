@@ -8,9 +8,9 @@ namespace CustomAlerts.Installers
 {
     internal class CustomAlertsInstaller : Installer
     {
-        private readonly Config _config;
+        private readonly PluginConfig _config;
 
-        public CustomAlertsInstaller(Config config)
+        public CustomAlertsInstaller(PluginConfig config)
         {
             _config = config;
         }

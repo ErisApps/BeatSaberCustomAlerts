@@ -12,7 +12,7 @@ using BeatSaberMarkupLanguage.ViewControllers;
 namespace CustomAlerts.UI
 {
     [HotReload]
-    public class AlertDetailView : BSMLAutomaticViewController
+    internal class AlertDetailView : BSMLAutomaticViewController
     {
         [UIParams]
         protected BSMLParserParams parserParams;
@@ -158,9 +158,9 @@ namespace CustomAlerts.UI
             _alertObjectManager = alertObjectManager;
         }
 
-        protected override void DidActivate(bool firstActivation, ActivationType type)
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
-            base.DidActivate(firstActivation, type);
+            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
             if (firstActivation)
             {
                 rectTransform.anchorMin = new Vector3(0.5f, 0, 0);

@@ -13,7 +13,7 @@ using BeatSaberMarkupLanguage.ViewControllers;
 namespace CustomAlerts.UI
 {
     [HotReload]
-    public class AlertListView : BSMLAutomaticViewController
+    internal class AlertListView : BSMLAutomaticViewController
     {
         public event Action<CustomAlert> DidSelectAlert;
 
@@ -34,15 +34,16 @@ namespace CustomAlerts.UI
             _alertObjectManager = alertObjectManager;
         }
 
-        protected override void DidActivate(bool firstActivation, ActivationType type)
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
-            base.DidActivate(firstActivation, type);
+            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
             if (firstActivation)
             {
                 rectTransform.anchorMin = new Vector3(0.5f, 0, 0);
                 rectTransform.anchorMax = new Vector3(0.5f, 1, 0);
                 rectTransform.sizeDelta = new Vector3(70, 0, 0);
             }
+
             alertList.data.Clear();
             alertList.data.AddRange(_alertObjectManager.Alerts.Select(ca => new ModelCell(ca)).ToList().OrderBy(a => a.Alert.AlertType));
             alertList.tableView.ReloadData();

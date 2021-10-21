@@ -18,15 +18,15 @@ namespace CustomAlerts.Streamlabs
         public event Action<ConnectionState> OnConnectionStateChanged;
 
         private string _token;
-        private readonly Config _config;
+        private readonly Configuration.PluginConfig _pluginConfig;
         private UnityWebRequest _donationRequest;
         private readonly IWebSocketService _webSocketService;
         private SynchronizationContext _synchronizationContext;
         private CancellationTokenSource _heartbeatCancellationToken;
 
-        public StreamlabsClient(Config config, IWebSocketService webSocketService)
+        public StreamlabsClient(Configuration.PluginConfig pluginConfig, IWebSocketService webSocketService)
         {
-            _config = config;
+            _pluginConfig = pluginConfig;
             _webSocketService = webSocketService;
             _webSocketService.OnOpen += OnOpen;
             _webSocketService.OnClose += OnClose;
@@ -42,7 +42,7 @@ namespace CustomAlerts.Streamlabs
             {
                 return;
             }
-            _token = _config.Tokens.SocketToken;
+            _token = _pluginConfig.Tokens.SocketToken;
             if (_token == "PUT_TOKEN_HERE")
             {
                 Application.OpenURL("https://streamlabs.com/api/v1.0/authorize?response_type=code&client_id=skX0cQaaRQLlPEaUi8eV6ZweLD8xKdz7Biegbd3g&redirect_uri=https://bs-customalerts-auth.herokuapp.com/oauth&scope=socket.token");

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace CustomAlerts.Queuing
 {
-    public class BasicQueueController : MonoBehaviour, IAlertQueue
+    internal class BasicQueueController : MonoBehaviour, IAlertQueue
     {
         private ChatService _chatService;
         private StreamlabsClient _streamlabsClient;
