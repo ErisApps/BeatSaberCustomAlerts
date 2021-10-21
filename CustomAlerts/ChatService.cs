@@ -23,47 +23,16 @@ namespace CustomAlerts
         {
             _config = config;
             _streamingService = streamingService;
-            _twitchChannel = _config.Twitch.Channel;
-            if (_twitchChannel == "TWITCH_NAME")
-            {
-                return;
-            }
+            
             _synchronizationContext = SynchronizationContext.Current;
-            _streamingService.OnLogin += StreamingService_OnLogin;
             _streamingService.OnTextMessageReceived += StreamServiceProvider_OnMessageReceived;
-            _streamingService.OnJoinChannel += StreamServiceProvider_OnChannelJoined;
-            _streamingService.OnLeaveChannel += StreamServiceProvider_OnLeaveChannel;
-            _streamingService.OnRoomStateUpdated += StreamServiceProvider_OnChannelStateUpdated;
-        }
-
-        private void StreamingService_OnLogin(IChatService svc)
-        {
-            if (svc is TwitchService twitchService)
-            {
-                twitchService.JoinChannel(_twitchChannel);
-            }
-        }
-
-        private void StreamServiceProvider_OnChannelStateUpdated(IChatService svc, IChatChannel channel)
-        {
-            
-        }
-
-        private void StreamServiceProvider_OnLeaveChannel(IChatService svc, IChatChannel channel)
-        {
-            
-        }
-
-        private void StreamServiceProvider_OnChannelJoined(IChatService svc, IChatChannel channel)
-        {
-            
         }
 
         private void StreamServiceProvider_OnMessageReceived(IChatService svc, IChatMessage msg)
         {
             try
             {
-                string[] redeemString = msg.Message.Split(new string[] { "redeemed " }, StringSplitOptions.None);
+                string[] redeemString = msg.Message.Split(new[] { "redeemed " }, StringSplitOptions.None);
                 if (msg is TwitchMessage twitchMsg)
                 {
                     int bits = twitchMsg.Bits;
@@ -91,7 +60,7 @@ namespace CustomAlerts
                     };
                     streamlabsEvent.Message[0] = new Message
                     {
-                        Name = redeemString[0].Split(new string[] { "] " }, StringSplitOptions.None)[1].Trim(),
+                        Name = redeemString[0].Split(new[] { "] " }, StringSplitOptions.None)[1].Trim(),
                         ChannelPointsName = redeemString[1].Trim()
                     };
                     _synchronizationContext.Send(SafeInvokeStreamEvent, streamlabsEvent);
@@ -107,11 +76,7 @@ namespace CustomAlerts
 
         public void Dispose()
         {
-            _streamingService.OnLogin -= StreamingService_OnLogin;
             _streamingService.OnTextMessageReceived -= StreamServiceProvider_OnMessageReceived;
-            _streamingService.OnJoinChannel -= StreamServiceProvider_OnChannelJoined;
-            _streamingService.OnLeaveChannel -= StreamServiceProvider_OnLeaveChannel;
-            _streamingService.OnRoomStateUpdated -= StreamServiceProvider_OnChannelStateUpdated;
         }
     }
 }
