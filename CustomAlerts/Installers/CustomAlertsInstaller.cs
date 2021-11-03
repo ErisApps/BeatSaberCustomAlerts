@@ -15,9 +15,9 @@ namespace CustomAlerts.Installers
         private readonly Logger _logger;
         private readonly PluginConfig _config;
         private readonly UBinder<Plugin, Version> _version;
-        private readonly ChatCoreInstance _catCoreInstance;
+        private readonly CatCoreInstance _catCoreInstance;
 
-        public CustomAlertsInstaller(Logger logger, PluginConfig config, UBinder<Plugin, Version> version, ChatCoreInstance catCoreInstance)
+        public CustomAlertsInstaller(Logger logger, PluginConfig config, UBinder<Plugin, Version> version, CatCoreInstance catCoreInstance)
         {
             _logger = logger;
             _config = config;

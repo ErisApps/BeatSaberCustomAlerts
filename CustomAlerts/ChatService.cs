@@ -16,13 +16,13 @@ namespace CustomAlerts
 	{
 		private readonly SiraLog _logger;
 
-		private readonly ChatCoreInstance _catCoreInstance;
+		private readonly CatCoreInstance _catCoreInstance;
 		private readonly ITwitchService _twitchService;
 		private readonly ITwitchPubSubServiceManager _twitchPubSubServiceManager;
 
 		private readonly SynchronizationContext _synchronizationContext;
 
-		public ChatService(SiraLog logger, ChatCoreInstance catCoreInstance)
+		public ChatService(SiraLog logger, CatCoreInstance catCoreInstance)
 		{
 			_synchronizationContext = SynchronizationContext.Current;
 
