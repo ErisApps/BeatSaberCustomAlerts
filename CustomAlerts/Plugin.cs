@@ -21,8 +21,10 @@ namespace CustomAlerts
         {
             Log = logger;
 
-            zenjector.OnApp<CustomAlertsInstaller>().WithParameters(logger, config.Generated<PluginConfig>(), new UBinder<Plugin, Version>(pluginMetadata.HVersion), CatCoreInstance.Create());
-            zenjector.OnMenu<CustomAlertsMenuInstaller>();
+            zenjector.UseLogger(logger);
+            
+            zenjector.Install<CustomAlertsInstaller>(Location.App, config.Generated<PluginConfig>(), new UBinder<Plugin, Version>(pluginMetadata.HVersion), CatCoreInstance.Create());
+            zenjector.Install<CustomAlertsMenuInstaller>(Location.Menu);
         }
 
         [OnEnable, OnDisable]

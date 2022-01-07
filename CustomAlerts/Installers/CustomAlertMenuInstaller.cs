@@ -1,6 +1,5 @@
 ﻿using CustomAlerts.UI;
 using HMUI;
-using SiraUtil;
 using Zenject;
 
 namespace CustomAlerts.Installers

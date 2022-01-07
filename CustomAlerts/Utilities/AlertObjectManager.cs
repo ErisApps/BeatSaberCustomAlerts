@@ -6,7 +6,7 @@ using CustomAlerts.Models;
 using CustomAlerts.Models.Events;
 using CustomAlerts.Configuration;
 using System.Collections.Generic;
-using SiraUtil.Tools;
+using SiraUtil.Logging;
 
 namespace CustomAlerts.Utilities
 {
@@ -14,7 +14,7 @@ namespace CustomAlerts.Utilities
 	{
 		private readonly SiraLog _logger;
 		private readonly PluginConfig _config;
-		public bool Loaded { get; private set; } = false;
+		public bool Loaded { get; private set; }
 		public IList<CustomAlert> Alerts { get; private set; }
 		public IEnumerable<string> CustomAlertFiles { get; private set; }
 
@@ -196,7 +196,7 @@ namespace CustomAlerts.Utilities
 				}
 				catch (Exception e)
 				{
-					_logger.Warning($"Failed to load Custom Alert with the name {caf}. {e.Message}");
+					_logger.Warn($"Failed to load Custom Alert with the name {caf}. {e.Message}");
 				}
 			}
 

@@ -7,7 +7,8 @@ using CustomAlerts.Models.Events;
 using CustomAlerts.Utilities;
 using System.Collections.Generic;
 using System.Linq;
-using SiraUtil.Tools;
+using IPA.Utilities.Async;
+using SiraUtil.Logging;
 
 namespace CustomAlerts.Queuing
 {
@@ -27,7 +28,7 @@ namespace CustomAlerts.Queuing
 
             _chatService.OnEvent += OnEvent;
 
-            logger.Logger.Notice("Queue Controller Constructed");
+            logger.Notice("Queue Controller Constructed");
         }
 
         public void OnDestroy()
