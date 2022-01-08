@@ -1,11 +1,9 @@
 ﻿using CatCore;
 using CustomAlerts.Configuration;
 using CustomAlerts.Installers;
-using Hive.Versioning;
 using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
-using IPA.Loader;
 using IPA.Logging;
 using SiraUtil.Zenject;
 
@@ -17,13 +15,14 @@ namespace CustomAlerts
         internal static Logger Log { get; private set; }
 
         [Init]
-        public Plugin(Logger logger, Config config, PluginMetadata pluginMetadata, Zenjector zenjector)
+        public Plugin(Logger logger, Config config, Zenjector zenjector)
         {
             Log = logger;
 
             zenjector.UseLogger(logger);
-            
-            zenjector.Install<CustomAlertsInstaller>(Location.App, config.Generated<PluginConfig>(), new UBinder<Plugin, Version>(pluginMetadata.HVersion), CatCoreInstance.Create());
+            zenjector.UseMetadataBinder<Plugin>();
+
+            zenjector.Install<CustomAlertsInstaller>(Location.App, config.Generated<PluginConfig>(), CatCoreInstance.Create());
             zenjector.Install<CustomAlertsMenuInstaller>(Location.Menu);
         }
 
