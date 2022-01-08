@@ -113,7 +113,7 @@ namespace CustomAlerts.UI
             }
         }
 
-        protected override void BackButtonWasPressed(ViewController topViewController)
+        protected override void BackButtonWasPressed(ViewController _)
         {
             BeatSaberUI.MainFlowCoordinator.DismissFlowCoordinator(this);
         }
