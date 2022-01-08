@@ -1,6 +1,5 @@
 ﻿using Zenject;
 using UnityEngine;
-using System.Threading;
 using System.Collections;
 using CustomAlerts.Models;
 using CustomAlerts.Models.Events;
@@ -16,15 +15,13 @@ namespace CustomAlerts.Queuing
     {
         private ChatService _chatService;
         private AlertObjectManager _alertObjectLoader;
-        private SynchronizationContext _synchronizationContext;
-        private readonly Queue<IAlert> _queuedAlerts = new Queue<IAlert>();
+        private readonly Queue<IAlert> _queuedAlerts = new();
 
         [Inject]
         public void Construct(SiraLog logger, ChatService chatService, AlertObjectManager alertObjectLoader)
         {
             _chatService = chatService;
             _alertObjectLoader = alertObjectLoader;
-            _synchronizationContext = SynchronizationContext.Current;
 
             _chatService.OnEvent += OnEvent;
 
@@ -57,19 +54,14 @@ namespace CustomAlerts.Queuing
             _queuedAlerts.Enqueue(alert);
             if (_queuedAlerts.Count == 1)
             {
-                StartCoroutine(PlayQueue());
+                UnityMainThreadTaskScheduler.Factory.StartNew(() => StartCoroutine(PlayQueue()));
             }
-        }
-
-        public void Dequeue(IAlert alert)
-        {
-            throw new System.NotImplementedException();
         }
 
         private IEnumerator PlayQueue()
         {
             IAlert alert = _queuedAlerts.Peek();
-            _synchronizationContext.Send(SafeInvokeSpawn, alert);
+            alert.Spawn();
             yield return new WaitForSecondsRealtime(alert.Lifeline);
             yield return new WaitForSecondsRealtime(alert.Flatline);
             _queuedAlerts.Dequeue();
@@ -78,7 +70,5 @@ namespace CustomAlerts.Queuing
                 StartCoroutine(PlayQueue());
             }
         }
-
-        void SafeInvokeSpawn(object alert) { (alert as IAlert)?.Spawn(); }
     }
 }
