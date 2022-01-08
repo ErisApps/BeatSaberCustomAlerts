@@ -64,18 +64,20 @@ namespace CustomAlerts.Utilities
 
 		public void Unload()
 		{
-			if (Loaded)
+			if (!Loaded)
 			{
-				_logger.Logger.Notice("Object Manager Unloading...");
-				Alerts.ToList().ForEach(a =>
-				{
-					a.Destroy();
-					_logger.Info("Destroyed: " + a.FileName);
-				});
-				Alerts.Clear();
-				CustomAlertFiles = Enumerable.Empty<string>();
-				Loaded = false;
+				return;
 			}
+
+			_logger.Notice("Object Manager Unloading...");
+			Alerts.ToList().ForEach(a =>
+			{
+				a.Destroy();
+				_logger.Info("Destroyed: " + a.FileName);
+			});
+			Alerts.Clear();
+			CustomAlertFiles = Enumerable.Empty<string>();
+			Loaded = false;
 		}
 
 		public AlertValue ValueFromAlert(CustomAlert alert)
@@ -120,34 +122,30 @@ namespace CustomAlerts.Utilities
 			}
 
 			AlertValue value = _config.Alerts.FirstOrDefault(a => a.Enabled && a.AlertType == alert.AlertType && (a.Value == alert.Descriptor.alertName || a.Value == alert.Descriptor.channelPointsName));
-			if (value != null)
+			if (value == null)
 			{
-				data.canSpawn = true;
-				if (value.AlertType == AlertType.ChannelPoints && twitchEvent != null)
-				{
-					data.canSpawn = alert.Descriptor.channelPointsName.ToLower().Trim() == twitchEvent.Message[0].ChannelPointsName.ToLower().Trim();
-				}
-
-				data.delay = value.OverrideDelay ? value.DelayOverrideTime : _config.AlertDelay;
-				data.volume = value.Volume;
+				return data;
 			}
+
+			data.canSpawn = true;
+			if (value.AlertType == AlertType.ChannelPoints && twitchEvent != null)
+			{
+				data.canSpawn = alert.Descriptor.channelPointsName.ToLower().Trim() == twitchEvent.Message[0].ChannelPointsName.ToLower().Trim();
+			}
+
+			data.delay = value.OverrideDelay ? value.DelayOverrideTime : _config.AlertDelay;
+			data.volume = value.Volume;
 
 			return data;
 		}
 
 		public CustomAlert GetAlertByType(AlertType type, string valueSpecific = null)
 		{
-			AlertValue value;
-			value = !string.IsNullOrEmpty(valueSpecific)
+			var value = !string.IsNullOrEmpty(valueSpecific)
 				? _config.Alerts.FirstOrDefault(a => a.Enabled && a.AlertType == type && a.Value.ToLower().Trim() == valueSpecific.ToLower().Trim())
 				: _config.Alerts.FirstOrDefault(a => a.Enabled && a.AlertType == type);
 
-			if (value != null)
-			{
-				return Alerts.FirstOrDefault(ca => ca.Descriptor != null && (ca.Descriptor.alertName == value.Value || ca.Descriptor.channelPointsName == value.Value));
-			}
-
-			return null;
+			return value != null ? Alerts.FirstOrDefault(ca => ca.Descriptor != null && (ca.Descriptor.alertName == value.Value || ca.Descriptor.channelPointsName == value.Value)) : null;
 		}
 
 		private static IEnumerable<string> GetFileNames(string path, IEnumerable<string> filters, SearchOption searchOption, bool returnShortPath = false)
