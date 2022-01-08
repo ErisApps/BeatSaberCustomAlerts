@@ -9,7 +9,7 @@ using SiraUtil.Zenject;
 
 namespace CustomAlerts
 {
-    [Plugin(RuntimeOptions.DynamicInit)]
+    [Plugin(RuntimeOptions.DynamicInit), NoEnableDisable]
     public class Plugin
     {
         internal static Logger Log { get; private set; }
@@ -24,12 +24,6 @@ namespace CustomAlerts
 
             zenjector.Install<CustomAlertsInstaller>(Location.App, config.Generated<PluginConfig>(), CatCoreInstance.Create());
             zenjector.Install<CustomAlertsMenuInstaller>(Location.Menu);
-        }
-
-        [OnEnable, OnDisable]
-        public void OnStateChanged()
-        {
-            // Nop, Zenject is pretty pog imho
         }
     }
 }
