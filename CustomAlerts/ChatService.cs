@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Threading;
+using System.Threading.Tasks;
 using CatCore;
-using CatCore.Models.Shared;
 using CatCore.Models.Twitch.IRC;
 using CatCore.Models.Twitch.PubSub.Responses;
 using CatCore.Models.Twitch.PubSub.Responses.ChannelPointsChannelV1;
-using CatCore.Services.Interfaces;
 using CatCore.Services.Twitch.Interfaces;
 using CustomAlerts.Models.Events;
 using SiraUtil.Logging;
@@ -20,12 +18,8 @@ namespace CustomAlerts
 		private readonly ITwitchService _twitchService;
 		private readonly ITwitchPubSubServiceManager _twitchPubSubServiceManager;
 
-		private readonly SynchronizationContext _synchronizationContext;
-
 		public ChatService(SiraLog logger, CatCoreInstance catCoreInstance)
 		{
-			_synchronizationContext = SynchronizationContext.Current;
-
 			_logger = logger;
 			_catCoreInstance = catCoreInstance;
 			_twitchService = _catCoreInstance.RunTwitchServices();
@@ -39,117 +33,125 @@ namespace CustomAlerts
 
 		public event Action<TwitchEvent> OnEvent;
 
-		private void TwitchService_OnMessageReceived(IChatService chatService, IChatMessage chatMessage)
+		private void TwitchService_OnMessageReceived(ITwitchService chatService, TwitchMessage twitchMessage)
 		{
-			try
+			_ = Task.Run(() =>
 			{
-				var twitchMessage = (TwitchMessage)chatMessage;
-				if (twitchMessage.Bits > 0)
+				try
 				{
-					var twitchEvent = new TwitchEvent
+					if (twitchMessage.Bits > 0)
 					{
-						AlertType = AlertType.Bits,
-						Message = new[]
+						InvokeTwitchEvent(new TwitchEvent
 						{
-							new Message
-							{
-								Name = chatMessage.Sender.UserName,
-								Amount = twitchMessage.Bits.ToString()
-							}
-						}
-					};
-
-					_synchronizationContext.Send(SafeInvokeTwitchEvent, twitchEvent);
-
-					return;
-				}
-
-				if (!twitchMessage.Metadata.TryGetValue(IrcMessageTags.MSG_ID, out var noticeType))
-				{
-					return;
-				}
-
-				switch (noticeType)
-				{
-					// TODO: What about subgifts and anon subs and such?
-					case "sub":
-					case "resub":
-						_synchronizationContext.Send(SafeInvokeTwitchEvent, new TwitchEvent
-						{
-							AlertType = AlertType.Subscription,
+							AlertType = AlertType.Bits,
 							Message = new[]
 							{
 								new Message
 								{
-									Name = chatMessage.Sender.UserName
+									Name = twitchMessage.Sender.UserName,
+									Amount = twitchMessage.Bits.ToString()
 								}
 							}
 						});
 
-						break;
-					case "raid":
-						var viewerCount = int.Parse(twitchMessage.Metadata[IrcMessageTags.MSG_PARAM_VIEWER_COUNT]);
-						_synchronizationContext.Send(SafeInvokeTwitchEvent, new TwitchEvent
-						{
-							AlertType = AlertType.Raids,
-							Message = new[]
+						return;
+					}
+
+					if (!twitchMessage.Metadata.TryGetValue(IrcMessageTags.MSG_ID, out var noticeType))
+					{
+						return;
+					}
+
+					switch (noticeType)
+					{
+						// TODO: What about subgifts and anon subs and such?
+						case "sub":
+						case "resub":
+							InvokeTwitchEvent(new TwitchEvent
 							{
-								new Message
+								AlertType = AlertType.Subscription,
+								Message = new[]
 								{
-									Name = chatMessage.Sender.UserName,
-									Viewers = viewerCount
+									new Message
+									{
+										Name = twitchMessage.Sender.UserName
+									}
 								}
-							}
-						});
+							});
 
-						break;
+							break;
+						case "raid":
+							var raider = twitchMessage.Metadata[IrcMessageTags.MSG_PARAM_DISPLAY_NAME];
+							var viewerCount = int.Parse(twitchMessage.Metadata[IrcMessageTags.MSG_PARAM_VIEWER_COUNT]);
+
+							InvokeTwitchEvent(new TwitchEvent
+							{
+								AlertType = AlertType.Raids,
+								Message = new[]
+								{
+									new Message
+									{
+										Name = raider,
+										Viewers = viewerCount
+									}
+								}
+							});
+
+							break;
+					}
+
+					// TODO: Cover HOST
 				}
-				
-				// TODO: Cover HOST
-			}
-			catch (Exception e)
-			{
-				_logger.Error($"Error when processing received chat message: {e.Message}");
-			}
+				catch (Exception e)
+				{
+					_logger.Error($"Error when processing received chat message: {e.Message}");
+				}
+			});
 		}
 
 		private void TwitchPubSub_OnFollow(string channelId, Follow followData)
 		{
-			var twitchEvent = new TwitchEvent
+			_ = Task.Run(() =>
 			{
-				AlertType = AlertType.Follow,
-				Message = new[]
+				var twitchEvent = new TwitchEvent
 				{
-					new Message
+					AlertType = AlertType.Follow,
+					Message = new[]
 					{
-						Name = followData.DisplayName
+						new Message
+						{
+							Name = followData.DisplayName
+						}
 					}
-				}
-			};
-			_synchronizationContext.Send(SafeInvokeTwitchEvent, twitchEvent);
+				};
+				InvokeTwitchEvent(twitchEvent);
+			});
 		}
 
 		private void TwitchPubSub_OnRewardRedeemed(string channelId, RewardRedeemedData rewardRedeemedData)
 		{
-			var twitchEvent = new TwitchEvent
+			_ = Task.Run(() =>
 			{
-				AlertType = AlertType.ChannelPoints,
-				Message = new[]
+				var twitchEvent = new TwitchEvent
 				{
-					new Message
+					AlertType = AlertType.ChannelPoints,
+					Message = new[]
 					{
-						Name = rewardRedeemedData.User.DisplayName,
-						ChannelPointsName = rewardRedeemedData.Reward.Title
+						new Message
+						{
+							Name = rewardRedeemedData.User.DisplayName,
+							ChannelPointsName = rewardRedeemedData.Reward.Title
+						}
 					}
-				}
-			};
-			_synchronizationContext.Send(SafeInvokeTwitchEvent, twitchEvent);
+				};
+				InvokeTwitchEvent(twitchEvent);
+			});
 		}
 
-		private void SafeInvokeTwitchEvent(object twitchEventObj)
+		private void InvokeTwitchEvent(TwitchEvent twitchEvent)
 		{
-			var twitchEvent = (TwitchEvent)twitchEventObj;
-			_logger.Logger.Notice($"Handling TwitchEvent of type \"{twitchEvent.AlertType:G}\"");
+			_logger.Notice($"Handling TwitchEvent of type \"{twitchEvent.AlertType:G}\"");
+
 			OnEvent?.Invoke(twitchEvent);
 		}
 
