@@ -32,13 +32,13 @@ namespace CustomAlerts.Utilities
 		{
 			if (!Loaded)
 			{
-				_logger.Logger.Notice("Object Manager Loading...");
+				_logger.Notice("Object Manager Loading...");
 				string assetPath = Path.Combine(UnityGame.UserDataPath, "CustomAlerts");
 				Directory.CreateDirectory(assetPath);
 
 				IEnumerable<string> alertFilter = new List<string> { "*.alert" };
 				CustomAlertFiles = GetFileNames(assetPath, alertFilter, SearchOption.AllDirectories, true).ToList();
-				_logger.Logger.Notice($"{CustomAlertFiles.Count()} alert(s) found.");
+				_logger.Notice($"{CustomAlertFiles.Count()} alert(s) found.");
 
 				Alerts = LoadCustomAlerts(CustomAlertFiles);
 
