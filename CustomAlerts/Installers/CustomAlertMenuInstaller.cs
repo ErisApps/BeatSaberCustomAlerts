@@ -13,7 +13,7 @@ namespace CustomAlerts.Installers
 			Container.Bind<AlertListView>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<AlertEditView>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<AlertDetailView>().FromNewComponentAsViewController().AsSingle();
-			Container.Bind<NavigationController>().FromNewComponentAsViewController().AsSingle();
+			Container.Bind<NavigationController>().FromNewComponentAsViewController().AsCached();
 			Container.BindInterfacesTo<CustomAlertsFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
 		}
 	}
