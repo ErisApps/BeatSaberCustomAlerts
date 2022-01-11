@@ -54,7 +54,7 @@ namespace CustomAlerts
 						return;
 					}
 
-					if (!twitchMessage.Metadata.TryGetValue(IrcMessageTags.MSG_ID, out var noticeType))
+					if (twitchMessage.Metadata == null || !twitchMessage.Metadata.TryGetValue(IrcMessageTags.MSG_ID, out var noticeType))
 					{
 						return;
 					}
