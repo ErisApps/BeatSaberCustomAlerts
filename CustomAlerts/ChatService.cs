@@ -64,12 +64,13 @@ namespace CustomAlerts
 						// TODO: What about subgifts and anon subs and such?
 						case "sub":
 						case "resub":
+							var subscriberName = twitchMessage.Metadata[IrcMessageTags.DISPLAY_NAME];
 							InvokeTwitchEvent(new TwitchEvent
 							{
 								AlertType = AlertType.Subscription,
 								Message = new Message
 								{
-									Name = twitchMessage.Sender.UserName
+									Name = subscriberName
 								}
 							});
 
