@@ -3,7 +3,7 @@
     public class TwitchEvent
     {
         public AlertType AlertType { get; set; }
-        public Message[] Message { get; set; }
+        public Message Message { get; set; }
 
         // TODO: Remove commented code
         /*{

@@ -35,7 +35,7 @@ namespace CustomAlerts.Queuing
 
         private void OnEvent(TwitchEvent twitchEvent)
         {
-            CustomAlert alert = _alertObjectLoader.GetAlertByType(twitchEvent.AlertType, twitchEvent.AlertType == AlertType.ChannelPoints ? twitchEvent.Message.FirstOrDefault()?.ChannelPointsName : null);
+            CustomAlert alert = _alertObjectLoader.GetAlertByType(twitchEvent.AlertType, twitchEvent.AlertType == AlertType.ChannelPoints ? twitchEvent.Message?.ChannelPointsName : null);
             AlertData alertData = _alertObjectLoader.Process(alert, twitchEvent);
             if (alertData.canSpawn)
             {

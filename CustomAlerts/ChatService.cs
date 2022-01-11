@@ -44,13 +44,10 @@ namespace CustomAlerts
 						InvokeTwitchEvent(new TwitchEvent
 						{
 							AlertType = AlertType.Bits,
-							Message = new[]
+							Message = new Message
 							{
-								new Message
-								{
-									Name = twitchMessage.Sender.UserName,
-									Amount = twitchMessage.Bits.ToString()
-								}
+								Name = twitchMessage.Sender.UserName,
+								Amount = twitchMessage.Bits.ToString()
 							}
 						});
 
@@ -70,12 +67,9 @@ namespace CustomAlerts
 							InvokeTwitchEvent(new TwitchEvent
 							{
 								AlertType = AlertType.Subscription,
-								Message = new[]
+								Message = new Message
 								{
-									new Message
-									{
-										Name = twitchMessage.Sender.UserName
-									}
+									Name = twitchMessage.Sender.UserName
 								}
 							});
 
@@ -87,13 +81,10 @@ namespace CustomAlerts
 							InvokeTwitchEvent(new TwitchEvent
 							{
 								AlertType = AlertType.Raids,
-								Message = new[]
+								Message = new Message
 								{
-									new Message
-									{
-										Name = raider,
-										Viewers = viewerCount
-									}
+									Name = raider,
+									Viewers = viewerCount
 								}
 							});
 
@@ -116,12 +107,9 @@ namespace CustomAlerts
 				var twitchEvent = new TwitchEvent
 				{
 					AlertType = AlertType.Follow,
-					Message = new[]
+					Message = new Message
 					{
-						new Message
-						{
-							Name = followData.DisplayName
-						}
+						Name = followData.DisplayName
 					}
 				};
 				InvokeTwitchEvent(twitchEvent);
@@ -135,13 +123,10 @@ namespace CustomAlerts
 				var twitchEvent = new TwitchEvent
 				{
 					AlertType = AlertType.ChannelPoints,
-					Message = new[]
+					Message = new Message
 					{
-						new Message
-						{
-							Name = rewardRedeemedData.User.DisplayName,
-							ChannelPointsName = rewardRedeemedData.Reward.Title
-						}
+						Name = rewardRedeemedData.User.DisplayName,
+						ChannelPointsName = rewardRedeemedData.Reward.Title
 					}
 				};
 				InvokeTwitchEvent(twitchEvent);

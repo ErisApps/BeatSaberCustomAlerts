@@ -82,16 +82,13 @@ namespace CustomAlerts.UI
             return new TwitchEvent
             {
                 AlertType = AlertType.Other,
-                Message = new []
+                Message = new Message
                 {
-                    new Message
-                    {
-                        Name = UnityEngine.Random.Range(0, 1000) == 0 ? "Ninja" : "username",
-                        ChannelPointsName = channelPointsName,
-                        Amount = dummyBitTypes[UnityEngine.Random.Range(0, dummyBitTypes.Length)],
-                        Raiders = UnityEngine.Random.Range(0, 5000),
-                        Viewers = UnityEngine.Random.Range(0, 5000)
-                    }
+                    Name = UnityEngine.Random.Range(0, 1000) == 0 ? "Ninja" : "username",
+                    ChannelPointsName = channelPointsName,
+                    Amount = dummyBitTypes[UnityEngine.Random.Range(0, dummyBitTypes.Length)],
+                    Raiders = UnityEngine.Random.Range(0, 5000),
+                    Viewers = UnityEngine.Random.Range(0, 5000)
                 }
             };
         }

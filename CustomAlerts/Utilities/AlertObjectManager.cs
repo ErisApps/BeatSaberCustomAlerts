@@ -130,7 +130,7 @@ namespace CustomAlerts.Utilities
 			data.canSpawn = true;
 			if (value.AlertType == AlertType.ChannelPoints && twitchEvent != null)
 			{
-				data.canSpawn = alert.Descriptor.channelPointsName.ToLower().Trim() == twitchEvent.Message[0].ChannelPointsName.ToLower().Trim();
+				data.canSpawn = alert.Descriptor.channelPointsName.ToLower().Trim() == twitchEvent.Message.ChannelPointsName.ToLower().Trim();
 			}
 
 			data.delay = value.OverrideDelay ? value.DelayOverrideTime : _config.AlertDelay;
